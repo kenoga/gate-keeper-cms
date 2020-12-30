@@ -14,27 +14,13 @@ services:
     volumes:
     - ./db/data:/var/lib/mysql
     - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
-    # - ./db/sql:/docker-entrypoint-initdb.d
     ports:
     - 3306:3306
-  gunicorn:
-    image: gatekeeper-backend:tmp 
+  api:
     container_name: gatekeeper-backend
+    build: .
+    restart: always
     volumes:
       - .:/app/
-      - gunicorn:/var/run/gunicorn
-  nginx:
-    image: nginx:1.17.7
-    container_name: nginx
-    depends_on: 
-      - gunicorn
     ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - gunicorn:/var/run/gunicorn
-      - ./log:/var/log/nginx/
-
-volumes:
-  gunicorn:
-    driver: local
+      - 5000:8000
