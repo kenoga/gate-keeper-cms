@@ -11,4 +11,3 @@ RUN pip install -r requirements.txt
 
 # RUN mkdir -p /var/run/gunicorn
 CMD ["uvicorn", "backend.main:app", "--reload", "--port", "8000", "--host", "0.0.0.0"]
-
