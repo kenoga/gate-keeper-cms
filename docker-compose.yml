@@ -16,6 +16,8 @@ services:
     - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
     - 3306:3306
+    networks: 
+      - app-net
   api:
     container_name: gatekeeper-backend
     build: .
@@ -24,3 +26,9 @@ services:
       - .:/app/
     ports:
       - 5000:8000
+    networks: 
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
