@@ -130,3 +130,6 @@ dmypy.json
 
 # frontend
 frontend/node_modules/
+
+# local db
+db/data/

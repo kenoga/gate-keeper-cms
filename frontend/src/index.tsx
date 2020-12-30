@@ -1,14 +1,37 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import RoomCalendar from "./RoomCalendar/RoomCalendar";
+import RoomDetail from "./RoomDetail/RoomDetail";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter, Link, Route, Router } from "react-router-dom";
+import { Container, Row } from "react-bootstrap";
+import Navigation from "./Nav/Nav";
+
+// Importing the Bootstrap CSS
+import "bootstrap/dist/css/bootstrap.min.css";
+import Switch from "react-bootstrap/esm/Switch";
+import Login from "./Login";
+import Logout from "./Logout";
+import Auth from "./Auth";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Container>
+      <BrowserRouter>
+        <Navigation></Navigation>
+        <Auth>
+          <Switch>
+            <Route exact path="/" component={RoomCalendar} />
+            <Route path="/detail/:dateString" component={RoomDetail} />
+            <Route path="/logout" component={Logout} />
+          </Switch>
+        </Auth>
+        <Route path="/login" component={Login} />
+      </BrowserRouter>
+    </Container>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
