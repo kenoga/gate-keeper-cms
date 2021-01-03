@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from .database import Base
 from .crud import *
 from .schema import *
-from .util import validate_session_key, unauthorized
+from .util import validate_session_key, unauthorized, hash_str
 
 
 from .database import SessionLocal, engine
@@ -53,14 +53,14 @@ def session(user_id: int):
 
 @app.post("/api/user", response_model=SuccessResponse)
 def post_user(param: LoginRequest) -> SuccessResponse:
-    create_user(SessionLocal(), param.email, hash(param.password), "")
+    create_user(SessionLocal(), param.email, hash_str(param.password), "")
     return success() 
 
 
 @app.post("/api/login", response_model=SuccessResponse)
 def login(param: LoginRequest, session_key: Optional[str] = Cookie(None)) -> SuccessResponse:
     logger.info("session_key: " + str(session_key))
-    user = fetch_user(SessionLocal(), param.email, hash(param.password))
+    user = fetch_user(SessionLocal(), param.email, hash_str(param.password))
     logger.info(hash(param.password))
     logger.info(str(param))
     if user is None:
