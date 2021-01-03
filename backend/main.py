@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from fastapi import FastAPI, Cookie
+from fastapi import FastAPI, Cookie, Response
 from fastapi.logger import logger
 
 from pydantic import BaseModel
@@ -20,28 +20,9 @@ app = FastAPI()
 logger = logging.getLogger(__name__)
 
 
-@app.get("/")
+@app.get("/health")
 async def root():
     return {"message": "Hello World"}
-
-
-@app.get("/test/{id}")
-def test(id: int = None):
-    return {"message": "test", "id": id}
-
-
-@app.get("/db")
-def db():
-    session = SessionLocal()
-    user = get_first_user(session)
-    return {"user": user, "reservations": get_users_reservations(session, 1)}
-
-
-@app.get("/db2")
-def db2():
-    session = SessionLocal()
-    user = get_first_user_with_reservations(session)
-    return {"user_with_reservations": user}
 
 
 @app.get("/session/{user_id}")
@@ -58,25 +39,26 @@ def post_user(param: LoginRequest) -> SuccessResponse:
 
 
 @app.post("/api/login", response_model=SuccessResponse)
-def login(param: LoginRequest, session_key: Optional[str] = Cookie(None)) -> SuccessResponse:
-    logger.info("session_key: " + str(session_key))
+def login(param: LoginRequest, response: Response) -> SuccessResponse:
     db = SessionLocal()
     user = fetch_user_with_sessions(db, param.email, hash_str(param.password))
     if user is None:
         unauthorized()
     if user.sessions:
-        # attach token
+        # attach the existed token
         logger.info("session token: " + user.sessions[0].token)
+        response.set_cookie("session_key", user.sessions[0].token)
     else:
-        # craete token
+        # create and attach a new token
         token = randomstr(64)
         create_session(db, user.id, token)
         logger.info("new session token: " + token)
-
+        response.set_cookie("session_key", token) 
     return success() 
 
 
-@app.post("/api/logout")
-def logout():
+@app.post("/api/logout", response_model=SuccessResponse)
+def logout(response: Response, session_key: Optional[str] = Cookie(None)) -> SuccessResponse:
     validate_session_key(session_key)
+    response.delete_cookie("session_key")
     return success()
