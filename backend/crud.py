@@ -25,5 +25,5 @@ def create_user(db: Session, email: str, encrypted_password: str, name: Optional
     db.add(user)
     db.commit()
     
-def fetch_user(db: Session, email: str, encrypted_password: str) -> Optional[model.User]:
-    return db.query(model.User).filter(model.User.email==email, model.User.encrypted_password==encrypted_password).first()
+def fetch_user_with_sessions(db: Session, email: str, encrypted_password: str) -> Optional[model.User]:
+    return db.query(model.User).options(joinedload(model.User.sessions)).filter(model.User.email==email, model.User.encrypted_password==encrypted_password).first()
