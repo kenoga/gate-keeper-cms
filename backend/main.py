@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from fastapi import FastAPI, Cookie
 from fastapi.logger import logger
@@ -8,6 +9,8 @@ from pydantic import BaseModel
 from .database import Base
 from .crud import *
 from .schema import *
+from .util import validate_session_key, unauthorized
+
 
 from .database import SessionLocal, engine
 
@@ -48,12 +51,24 @@ def session(user_id: int):
     return
 
 
-@app.post("/api/login")
-def login(param: LoginRequest, session_key: str = Cookie(None)):
+@app.post("/api/user", response_model=SuccessResponse)
+def post_user(param: LoginRequest) -> SuccessResponse:
+    create_user(SessionLocal(), param.email, hash(param.password), "")
+    return success() 
+
+
+@app.post("/api/login", response_model=SuccessResponse)
+def login(param: LoginRequest, session_key: Optional[str] = Cookie(None)) -> SuccessResponse:
     logger.info("session_key: " + str(session_key))
-    return {"param": param}
+    user = fetch_user(SessionLocal(), param.email, hash(param.password))
+    logger.info(hash(param.password))
+    logger.info(str(param))
+    if user is None:
+        unauthorized()
+    return success() 
 
 
 @app.post("/api/logout")
 def logout():
-    pass
+    validate_session_key(session_key)
+    return success()

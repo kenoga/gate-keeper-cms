@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy.orm import Session, joinedload
 
 from . import model
@@ -16,4 +17,13 @@ def get_users_reservations(db: Session, user_id: int):
 def create_session(db: Session, user_id: int, token: str):
     session = model.UserSession(user_id = user_id, token = token)
     db.add(session)
-    db.commit() 
+    db.commit()
+
+
+def create_user(db: Session, email: str, encrypted_password: str, name: Optional[str] = None):
+    user = model.User(email=email,encrypted_password=encrypted_password, name=name)
+    db.add(user)
+    db.commit()
+    
+def fetch_user(db: Session, email: str, encrypted_password: str) -> Optional[model.User]:
+    return db.query(model.User).filter(model.User.email==email, model.User.encrypted_password==encrypted_password).first()

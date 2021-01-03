@@ -2,6 +2,13 @@ from pydantic import BaseModel
 
 
 class LoginRequest(BaseModel):
-    user_id: int
-    password: str 
+    email: str
+    password: str
 
+
+class SuccessResponse(BaseModel):
+    message: str
+
+
+def success() -> SuccessResponse:
+    return SuccessResponse(message="success!")

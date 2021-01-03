@@ -1,5 +1,4 @@
 version: 1
-disable_existing_loggers: true
 
 formatters:
     standard:
@@ -31,3 +30,13 @@ loggers:
         level: INFO
         handlers: [console]
         propogate: no
+    fastapi:
+        level: DEBUG 
+        handlers: [console]
+        propogate: no
+    uvicorn:
+        level: DEBUG 
+        handlers: [console]
+        propogate: no
+
+    
