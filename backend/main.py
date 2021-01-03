@@ -1,4 +1,5 @@
 import logging
+import datetime
 from typing import Optional
 
 from fastapi import FastAPI, Cookie, Response
@@ -62,3 +63,12 @@ def logout(response: Response, session_key: Optional[str] = Cookie(None)) -> Suc
     validate_session_key(session_key)
     response.delete_cookie("session_key")
     return success()
+
+@app.get("/api/calendar/{playground_id}/{date}")
+def get_date_reservation(playground_id: int, date: datetime.date):
+    return { "playground_id": playground_id, "date": date }
+
+@app.get("/api/calendar/{playground_id}")
+def get_month_reservation(playground_id: int, year: int, month: int):
+    return { "playground_id": playground_id, "year": year, "month": month }
+    
