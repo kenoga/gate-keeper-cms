@@ -11,7 +11,7 @@ from .schema import *
 from .import crud
 from . import model
 from . import service
-from .util import validate_session_key, unauthorized, hash_str, randomstr 
+from .util import auth, unauthorized, hash_str, randomstr 
 from .database import SessionLocal
 
 app = FastAPI()
@@ -23,13 +23,13 @@ logger = logging.getLogger(__name__)
 async def root():
     return {"message": "Hello World"}
 
-
-
+"""
+User related API
+"""
 @app.post("/api/user", response_model=SuccessResponse)
 def post_user(param: LoginRequest) -> SuccessResponse:
     crud.create_user(SessionLocal(), param.email, hash_str(param.password), "")
     return success() 
-
 
 @app.post("/api/login", response_model=SuccessResponse)
 def login(param: LoginRequest, response: Response) -> SuccessResponse:
@@ -49,13 +49,16 @@ def login(param: LoginRequest, response: Response) -> SuccessResponse:
         response.set_cookie("session_key", token) 
     return success() 
 
-
 @app.post("/api/logout", response_model=SuccessResponse)
 def logout(response: Response, session_key: Optional[str] = Cookie(None)) -> SuccessResponse:
-    validate_session_key(session_key)
+    user = auth(SessionLocal(), session_key)
     response.delete_cookie("session_key")
     return success()
 
+
+"""
+Calendar API
+"""
 @app.get("/api/calendar/{playground_id}/{date}")
 def get_date_reservation(playground_id: int, date: datetime.date):
     result = service.get_date_calendar(SessionLocal(), playground_id, date)
@@ -67,17 +70,21 @@ def get_month_reservation(playground_id: int, year: int, month: int):
     end = datetime.date(year, month, calendar.monthrange(year, month)[1])
     result = service.get_calendar(SessionLocal(), playground_id, start, end)
     return { "playground_id": playground_id, "reserved": result }
-    
-
-@app.post("/api/calendar/test")
-def test(date: datetime.date):
-    db = SessionLocal()
-    r = model.Reservation(user_id=1, playground_id=1, date=date)
-    db.add(r)
-    db.commit()
-    return success()
 
 
+"""
+Reservation API
+"""
 @app.get("/api/user/{user_id}/reservations")
 def user_reservations(user_id: int):
+    # TODO: dateでそーとして返す
     return { "reservations": crud.get_users_reservations(SessionLocal(), user_id) }
+
+    
+# TODO: post reservation API
+
+
+"""
+Key API
+"""
+# TODO: モデル定義

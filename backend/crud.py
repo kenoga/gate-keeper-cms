@@ -21,6 +21,12 @@ def create_session(db: Session, user_id: int, token: str):
     db.add(session)
     db.commit()
 
+def fetch_user_by_session_token(db: Session, session_key: str) -> Optional[model.User]:
+    session = db.query(model.UserSession).options(joinedload(model.UserSession.user)).filter(model.UserSession.token==session_key).first()
+    if session is None:
+        return None
+    return session.user
+
 
 def create_user(db: Session, email: str, encrypted_password: str, name: Optional[str] = None):
     user = model.User(email=email,encrypted_password=encrypted_password, name=name)
