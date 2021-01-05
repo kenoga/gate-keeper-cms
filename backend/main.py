@@ -7,13 +7,14 @@ from fastapi.logger import logger
 
 from pydantic import BaseModel
 
-from .database import Base
 from .crud import *
 from .schema import *
+from . import model
 from .util import validate_session_key, unauthorized, hash_str, randomstr 
+from . import service
 
 
-from .database import SessionLocal, engine
+from .database import SessionLocal
 
 
 app = FastAPI()
@@ -25,12 +26,6 @@ logger = logging.getLogger(__name__)
 async def root():
     return {"message": "Hello World"}
 
-
-@app.get("/session/{user_id}")
-def session(user_id: int):
-    session = SessionLocal()
-    create_session(session, user_id, 'test_token')
-    return
 
 
 @app.post("/api/user", response_model=SuccessResponse)
@@ -66,9 +61,23 @@ def logout(response: Response, session_key: Optional[str] = Cookie(None)) -> Suc
 
 @app.get("/api/calendar/{playground_id}/{date}")
 def get_date_reservation(playground_id: int, date: datetime.date):
-    return { "playground_id": playground_id, "date": date }
+    calendar = service.get_date_calendar(SessionLocal(), playground_id, date)
+    return { "playground_id": playground_id, date: calendar }
 
 @app.get("/api/calendar/{playground_id}")
 def get_month_reservation(playground_id: int, year: int, month: int):
     return { "playground_id": playground_id, "year": year, "month": month }
     
+
+@app.post("/api/calendar/test")
+def test(date: datetime.date):
+    db = SessionLocal()
+    r = model.Reservation(user_id=1, playground_id=1, date=date)
+    db.add(r)
+    db.commit()
+    return success()
+
+
+@app.get("/api/user/{user_id}/reservations")
+def user_reservations(user_id: int):
+    return { "reservations": get_users_reservations(SessionLocal(), user_id) }
