@@ -7,15 +7,12 @@ from fastapi.logger import logger
 
 from pydantic import BaseModel
 
-from .crud import *
 from .schema import *
+from .import crud
 from . import model
-from .util import validate_session_key, unauthorized, hash_str, randomstr 
 from . import service
-
-
+from .util import validate_session_key, unauthorized, hash_str, randomstr 
 from .database import SessionLocal
-
 
 app = FastAPI()
 
@@ -30,14 +27,14 @@ async def root():
 
 @app.post("/api/user", response_model=SuccessResponse)
 def post_user(param: LoginRequest) -> SuccessResponse:
-    create_user(SessionLocal(), param.email, hash_str(param.password), "")
+    crud.create_user(SessionLocal(), param.email, hash_str(param.password), "")
     return success() 
 
 
 @app.post("/api/login", response_model=SuccessResponse)
 def login(param: LoginRequest, response: Response) -> SuccessResponse:
     db = SessionLocal()
-    user = fetch_user_with_sessions(db, param.email, hash_str(param.password))
+    user = crud.fetch_user_with_sessions(db, param.email, hash_str(param.password))
     if user is None:
         unauthorized()
     if user.sessions:
@@ -47,7 +44,7 @@ def login(param: LoginRequest, response: Response) -> SuccessResponse:
     else:
         # create and attach a new token
         token = randomstr(64)
-        create_session(db, user.id, token)
+        crud.create_session(db, user.id, token)
         logger.info("new session token: " + token)
         response.set_cookie("session_key", token) 
     return success() 
@@ -80,4 +77,4 @@ def test(date: datetime.date):
 
 @app.get("/api/user/{user_id}/reservations")
 def user_reservations(user_id: int):
-    return { "reservations": get_users_reservations(SessionLocal(), user_id) }
+    return { "reservations": crud.get_users_reservations(SessionLocal(), user_id) }
