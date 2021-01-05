@@ -82,6 +82,11 @@ def user_reservations(user_id: int):
 
     
 # TODO: post reservation API
+# WIP
+@app.post("/api/reserve")
+def reserve(request: ReserveRequest, session_key: Optional[str] = Cookie(None)):
+    user = auth(SessionLocal(), session_key)
+    return success()
 
 
 """

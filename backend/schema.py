@@ -1,4 +1,6 @@
+
 from pydantic import BaseModel
+import datetime
 
 
 class LoginRequest(BaseModel):
@@ -12,3 +14,11 @@ class SuccessResponse(BaseModel):
 
 def success() -> SuccessResponse:
     return SuccessResponse(message="success!")
+
+
+class ReserveRequest(BaseModel):
+    playground_id: int
+    date: datetime.date
+    time_range_id: int
+
+     
