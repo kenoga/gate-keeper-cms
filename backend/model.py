@@ -46,7 +46,7 @@ class Reservation(Base):
     user_id = Column(Integer, ForeignKey("user.id"))
     playground_id = Column(Integer, ForeignKey("playground.id"))
     date = Column(Date)
-    status = Column(Enum(ReservationStatus), nullable=False)
+    status = Column(Enum(ReservationStatus), nullable=False, default=ReservationStatus.RESERVED)
     time_range_id = Column(Integer, ForeignKey("time_range.id"))
 
     updated_at = Column(DateTime, nullable=False, server_default=current_timestamp())
@@ -64,6 +64,9 @@ class TimeRange(Base):
     name = Column(String, nullable=False)
     start_hour = Column(Integer, nullable=False)
     end_hour = Column(Integer, nullable=False)
+
+
+
     
 
 

@@ -81,11 +81,12 @@ def user_reservations(user_id: int):
     return { "reservations": crud.get_users_reservations(SessionLocal(), user_id) }
 
     
-# TODO: post reservation API
 # WIP
 @app.post("/api/reserve")
 def reserve(request: ReserveRequest, session_key: Optional[str] = Cookie(None)):
-    user = auth(SessionLocal(), session_key)
+    db = SessionLocal()
+    user = auth(db, session_key)
+    crud.create_reservation(db, user.id, request.playground_id, request.date, request.time_range_id)
     return success()
 
 
