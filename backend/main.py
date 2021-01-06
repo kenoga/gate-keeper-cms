@@ -81,7 +81,6 @@ def user_reservations(user_id: int):
     return { "reservations": crud.get_users_reservations(SessionLocal(), user_id) }
 
     
-# WIP
 @app.post("/api/reserve")
 def reserve(request: ReserveRequest, session_key: Optional[str] = Cookie(None)):
     db = SessionLocal()
@@ -93,4 +92,4 @@ def reserve(request: ReserveRequest, session_key: Optional[str] = Cookie(None)):
 """
 Key API
 """
-# TODO: モデル定義
+# TODO: 鍵操作APIの定義
