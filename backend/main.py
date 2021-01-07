@@ -99,9 +99,15 @@ Key API
 
 
 
-@app.put("/api/gateway/{action}")
+@app.put("/api/gateway/{action}", response_model=SuccessResponse)
 def put_gateway(request: PutGatewayRequest, action: GatewayAction, session_key: Optional[str] = Cookie(None)):
     db = SessionLocal()
     user = auth(db, session_key)
     gateway_session = service.validate_gateway_session(db, request.gateway_session_key, user)
-    return { "gateway_session": gateway_session, "user": user }
+
+    if action == GatewayAction.LOCK:
+        service.lock_gateway(db, gateway_session)
+    else:
+        service.unlock_gateway(db, gateway_session)
+    
+    return success()

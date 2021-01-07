@@ -46,3 +46,12 @@ def validate_gateway_session(db: Session, gateway_session_key: str, user: model.
     if session is None or session.user_id != user.id:
         util.unauthorized()
     return session
+
+    
+def unlock_gateway(db: Session, gateway_session: model.GatewaySession):
+    logger.info("Gateway unlocked!! (gateway_id: %d)" % gateway_session.gateway_id)
+    pass
+
+def lock_gateway(db: Session, gateway_session: model.GatewaySession):
+    logger.info("Gateway locked!! (gateway_id: %d)" % gateway_session.gateway_id)
+    pass
