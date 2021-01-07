@@ -1,6 +1,7 @@
 import logging
 import datetime, calendar
 from typing import Optional
+import enum
 
 from fastapi import FastAPI, Cookie, Response
 from fastapi.logger import logger
@@ -11,7 +12,8 @@ from .schema import *
 from .import crud
 from . import model
 from . import service
-from .util import auth, unauthorized, hash_str, randomstr 
+from .service import auth
+from .util import unauthorized, hash_str, randomstr 
 from .database import SessionLocal
 
 app = FastAPI()
@@ -93,3 +95,13 @@ def reserve(request: ReserveRequest, session_key: Optional[str] = Cookie(None)):
 Key API
 """
 # TODO: 鍵操作APIの定義
+
+
+
+
+@app.put("/api/gateway/{action}")
+def put_gateway(request: PutGatewayRequest, action: GatewayAction, session_key: Optional[str] = Cookie(None)):
+    db = SessionLocal()
+    user = auth(db, session_key)
+    gateway_session = service.validate_gateway_session(db, request.gateway_session_key, user)
+    return { "gateway_session": gateway_session, "user": user }

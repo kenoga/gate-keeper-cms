@@ -58,6 +58,7 @@ class Reservation(Base):
     user = relationship("User", back_populates="reservations") 
     playground = relationship("Playground") 
     time_range = relationship("TimeRange")
+    gateway_sessions = relationship("GatewaySession", back_populates="reservation")
 
 
 
@@ -106,6 +107,8 @@ class GatewaySession(Base):
     id = Column(Integer, primary_key=True, index=True)
     gateway_id = Column(Integer, ForeignKey("gateway.id"), nullable=False)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    reservation_id = Column(Integer, ForeignKey("reservation.id"), nullable=True)
+    
     start_at = Column(DateTime, nullable=False)
     end_at = Column(DateTime, nullable=False)
     status = Column(Enum(GatewaySessionStatus), nullable=False)
@@ -116,6 +119,7 @@ class GatewaySession(Base):
 
     user = relationship("User", back_populates="gateway_sessions") 
     gateway = relationship("Gateway", back_populates="session")
+    reservation = relationship("Reservation", back_populates="gateway_sessions")
     
     
      

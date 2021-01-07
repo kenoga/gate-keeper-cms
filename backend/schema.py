@@ -1,7 +1,7 @@
 
 from pydantic import BaseModel
 import datetime
-
+import enum
 
 class LoginRequest(BaseModel):
     email: str
@@ -21,4 +21,9 @@ class ReserveRequest(BaseModel):
     date: datetime.date
     time_range_id: int
 
-     
+class GatewayAction(enum.Enum):
+    LOCK = "lock"
+    UNLOCK = "unlock"     
+
+class PutGatewayRequest(BaseModel):
+    gateway_session_key: str
