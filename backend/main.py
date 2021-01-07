@@ -77,17 +77,20 @@ def get_month_reservation(playground_id: int, year: int, month: int):
 """
 Reservation API
 """
-@app.get("/api/user/{user_id}/reservations")
-def user_reservations(user_id: int):
-    # TODO: dateでそーとして返す
-    return { "reservations": crud.get_users_reservations(SessionLocal(), user_id) }
+@app.get("/api/user/{user_id}/reservations", response_model=MyReservationsResponse)
+def user_reservations(user_id: int, session_key: Optional[str] = Cookie(None)):
+    # TODO: sorting
+    db = SessionLocal()
+    user = auth(db, session_key)
+    return MyReservationsResponse(reservations=service.get_user_reservations(SessionLocal(), user))
 
     
 @app.post("/api/reserve")
 def reserve(request: ReserveRequest, session_key: Optional[str] = Cookie(None)):
     db = SessionLocal()
     user = auth(db, session_key)
-    crud.create_reservation(db, user.id, request.playground_id, request.date, request.time_range_id)
+    start_at, end_at = service.resolve_time_range(request.date, request.time_range)
+    crud.create_reservation(db, user.id, request.playground_id, request.date, start_at, end_at)
     return success()
 
 

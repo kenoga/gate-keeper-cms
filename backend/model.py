@@ -42,6 +42,11 @@ class ReservationStatus(enum.Enum):
     RESERVED = "RESERVED"
     CANCELED = "CANCELED"
     
+class TimeRange(enum.Enum):
+    DAY = "DAY"
+    EVENING = "EVENING"
+    NIGHT = "NIGHT"
+    OTHER = "OTHER"
 
 class Reservation(Base):
     __tablename__ = "reservation"
@@ -50,24 +55,17 @@ class Reservation(Base):
     playground_id = Column(Integer, ForeignKey("playground.id"), nullable=False)
     date = Column(Date, nullable=False)
     status = Column(Enum(ReservationStatus), nullable=False, default=ReservationStatus.RESERVED)
-    time_range_id = Column(Integer, ForeignKey("time_range.id"), nullable=False)
+
+    start_at = Column(DateTime, nullable=False)
+    end_at = Column(DateTime, nullable=False)
+    time_range = Column(Enum(TimeRange), nullable=True, default=TimeRange.OTHER)
 
     updated_at = Column(DateTime, nullable=False, server_default=current_timestamp())
     created_at = Column(DateTime, nullable=False, server_default=current_timestamp())
 
     user = relationship("User", back_populates="reservations") 
     playground = relationship("Playground") 
-    time_range = relationship("TimeRange")
     gateway_sessions = relationship("GatewaySession", back_populates="reservation")
-
-
-
-class TimeRange(Base):
-    __tablename__ = "time_range"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    start_hour = Column(Integer, nullable=False)
-    end_hour = Column(Integer, nullable=False)
 
 class GatewayType(enum.Enum):
     ENTRANCE = "ENTRANCE"

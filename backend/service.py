@@ -1,9 +1,10 @@
-from typing import Optional, Any, NoReturn
+from typing import Optional, Any, NoReturn, Tuple, List
 import datetime
 import logging
 from . import crud
 from . import model
 from . import util
+from . import schema
 
 from collections import defaultdict
 
@@ -48,6 +49,18 @@ def validate_gateway_session(db: Session, gateway_session_key: str, user: model.
     return session
 
     
+    
+# RESERVATION
+def resolve_time_range(date: datetime.date, time_range: model.TimeRange) -> Tuple[datetime.datetime, datetime.datetime]:
+    #  TODO: impl
+    return datetime.datetime.now(), datetime.datetime.now()
+    
+
+def get_user_reservations(db: Session, user: model.User) -> List[schema.ReservationResponse]: 
+    reservations = crud.fetch_user_reservations(db, user.id)
+    return reservations
+    
+# KEY
 def unlock_gateway(db: Session, gateway_session: model.GatewaySession):
     logger.info("Gateway unlocked!! (gateway_id: %d)" % gateway_session.gateway_id)
     pass

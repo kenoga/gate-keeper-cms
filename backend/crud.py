@@ -12,8 +12,8 @@ def get_first_user(db: Session):
 def get_first_user_with_reservations(db: Session):
     return db.query(model.User).options(joinedload(model.User.reservations)).first()
 
-def get_users_reservations(db: Session, user_id: int):
-    return db.query(model.Reservation).options(joinedload(model.Reservation.time_range)).filter(model.Reservation.user_id==user_id).all()
+def fetch_user_reservations(db: Session, user_id: int):
+    return db.query(model.Reservation).options(joinedload(model.Reservation.gateway_sessions)).filter(model.Reservation.user_id==user_id).all()
 
 
 def create_session(db: Session, user_id: int, token: str):
@@ -34,8 +34,8 @@ def create_user(db: Session, email: str, encrypted_password: str, name: Optional
     db.commit()
 
 
-def create_reservation(db: Session, user_id: int, playground_id: int, date: datetime.date, time_range_id: int):
-    r = model.Reservation(user_id=user_id, playground_id=playground_id, date=date, time_range_id=time_range_id)
+def create_reservation(db: Session, user_id: int, playground_id: int, date: datetime.date, start_at: datetime.datetime, end_at: datetime.datetime):
+    r = model.Reservation(user_id=user_id, playground_id=playground_id, date=date, start_at=start_at, end_at=end_at)
     db.add(r)
     db.commit()
     
