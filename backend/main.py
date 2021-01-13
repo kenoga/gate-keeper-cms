@@ -13,7 +13,7 @@ from .import crud
 from . import model
 from . import service
 from .service import auth
-from .util import unauthorized, hash_str, randomstr 
+from .util import unauthorized, hash_str, randomstr, now 
 from .database import SessionLocal
 
 app = FastAPI()
@@ -84,6 +84,13 @@ def user_reservations(user_id: int, session_key: Optional[str] = Cookie(None)):
     user = auth(db, session_key)
     return MyReservationsResponse(reservations=service.get_user_reservations(SessionLocal(), user))
 
+@app.get("/api/user/{user_id}/reservations/active", response_model=ReservationResponse)
+def user_active_reservation(user_id: int, session_key: Optional[str] = Cookie(None)):
+    db = SessionLocal()
+    user = auth(db, session_key)
+    logger.info("now: " + str(now()))
+    return service.get_user_active_reservation(db, user)
+
     
 @app.post("/api/reserve")
 def reserve(request: ReserveRequest, session_key: Optional[str] = Cookie(None)):
@@ -92,6 +99,7 @@ def reserve(request: ReserveRequest, session_key: Optional[str] = Cookie(None)):
     start_at, end_at = service.resolve_time_range(request.date, request.time_range)
     crud.create_reservation(db, user.id, request.playground_id, request.date, start_at, end_at)
     return success()
+
 
 
 """
@@ -103,7 +111,7 @@ Key API
 
 
 @app.put("/api/gateway/{action}", response_model=SuccessResponse)
-def put_gateway(request: PutGatewayRequest, action: GatewayAction, session_key: Optional[str] = Cookie(None)):
+def put_gateway(request: GatewayRequest, action: GatewayAction, session_key: Optional[str] = Cookie(None)):
     db = SessionLocal()
     user = auth(db, session_key)
     gateway_session = service.validate_gateway_session(db, request.gateway_session_key, user)
@@ -114,3 +122,12 @@ def put_gateway(request: PutGatewayRequest, action: GatewayAction, session_key: 
         service.unlock_gateway(db, gateway_session)
     
     return success()
+
+@app.get("/api/gateway", response_model=SuccessResponse)
+def get_gateway_status(request: GatewayRequest, session_key: Optional[str] = Cookie(None)):
+    db = SessionLocal()
+    user = auth(db, session_key)
+    gateway_session = service.validate_gateway_session(db, request.gateway_session_key, user)
+    
+    return GatewayStatusResponse(gateway_id=gateway_session.id, status=get_gateway_status(gateway_session))
+    

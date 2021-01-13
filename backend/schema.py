@@ -28,7 +28,7 @@ class GatewayAction(enum.Enum):
     LOCK = "lock"
     UNLOCK = "unlock"     
 
-class PutGatewayRequest(BaseModel):
+class GatewayRequest(BaseModel):
     gateway_session_key: str
 
 
@@ -65,3 +65,6 @@ class MyReservationsResponse(BaseModel):
         orm_mode = True
 
     
+class GatewayStatusResponse(BaseModel):
+    gateway_id: int
+    status: str

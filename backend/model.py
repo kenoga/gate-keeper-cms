@@ -72,6 +72,16 @@ class GatewayType(enum.Enum):
     DOOR = "DOOR"
     
 
+# これはDBに保存されない。デバイスが持つ状態
+class DoorStatus(enum.Enum):
+    LOCKED = "LOCKED"
+    UNLOCKED = "UNLOCKED"
+
+# これはDBに保存されない。
+class EntranceStatus(enum.Enum):
+    AVAILABLE = "AVAILABLE"
+    UNAVAILABLE = "UNAVAILABLE" 
+
 class Gateway(Base):
     __tablename__ = "gateway"
     id = Column(Integer, primary_key=True, index=True)

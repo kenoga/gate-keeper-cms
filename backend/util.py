@@ -3,6 +3,7 @@ from fastapi import HTTPException
 import hashlib
 import random, string
 from .crud import fetch_user_by_session_token
+from datetime import datetime, timezone, timedelta
 
 from sqlalchemy.orm import Session
 
@@ -23,3 +24,9 @@ def unauthorized() -> NoReturn:
 
 def randomstr(n):
    return ''.join(random.choices(string.ascii_letters + string.digits, k=n))
+
+
+JST = timezone(timedelta(hours=+9), 'JST')
+def now():
+    return datetime.now(JST)
+    

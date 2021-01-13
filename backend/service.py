@@ -55,10 +55,11 @@ def resolve_time_range(date: datetime.date, time_range: model.TimeRange) -> Tupl
     #  TODO: impl
     return datetime.datetime.now(), datetime.datetime.now()
     
-
 def get_user_reservations(db: Session, user: model.User) -> List[schema.ReservationResponse]: 
-    reservations = crud.fetch_user_reservations(db, user.id)
-    return reservations
+    return crud.fetch_user_reservations(db, user.id)
+
+def get_user_active_reservation(db: Session, user: model.User) -> schema.ReservationResponse:
+    return crud.fetch_user_active_reservation(db, user.id, util.now())
     
 # KEY
 def unlock_gateway(db: Session, gateway_session: model.GatewaySession):
@@ -67,4 +68,13 @@ def unlock_gateway(db: Session, gateway_session: model.GatewaySession):
 
 def lock_gateway(db: Session, gateway_session: model.GatewaySession):
     logger.info("Gateway locked!! (gateway_id: %d)" % gateway_session.gateway_id)
+    # 紐づく
     pass
+
+def get_gateway_status(gateway_session: model.GatewaySession):
+    # TODO: wip
+    if gateway_session.gateway.type == model.GatewayType.ENTRANCE:
+        return model.EntranceStatus.AVAILABLE
+    else:
+        return model.DoorStatus.LOCKED 
+    
