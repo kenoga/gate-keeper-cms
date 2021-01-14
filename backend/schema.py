@@ -1,5 +1,5 @@
 
-from typing import List
+from typing import List, Dict
 from pydantic import BaseModel
 import datetime
 import enum
@@ -43,6 +43,16 @@ class GatewaySessionResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class DateCalendarResponse(BaseModel):
+    playground_id: int
+    date: datetime.date 
+    reserved: Dict[model.TimeRange, int]
+    
+class MonthCalendarResponse(BaseModel):
+    playground_id: int
+    reserved: Dict[datetime.date, Dict[model.TimeRange, int]]
 
 class ReservationResponse(BaseModel):
     id: int

@@ -61,17 +61,17 @@ def logout(response: Response, session_key: Optional[str] = Cookie(None)) -> Suc
 """
 Calendar API
 """
-@app.get("/api/calendar/{playground_id}/{date}")
+@app.get("/api/calendar/{playground_id}/{date}", response_model=DateCalendarResponse)
 def get_date_reservation(playground_id: int, date: datetime.date):
     result = service.get_date_calendar(SessionLocal(), playground_id, date)
-    return { "playground_id": playground_id, "date": date, "reserved": result }
+    return DateCalendarResponse(playground_id=playground_id, date=date, reserved=result)
 
-@app.get("/api/calendar/{playground_id}")
+@app.get("/api/calendar/{playground_id}", response_model=MonthCalendarResponse)
 def get_month_reservation(playground_id: int, year: int, month: int):
     start = datetime.date(year, month, 1)
     end = datetime.date(year, month, calendar.monthrange(year, month)[1])
     result = service.get_calendar(SessionLocal(), playground_id, start, end)
-    return { "playground_id": playground_id, "reserved": result }
+    return MonthCalendarResponse(playground_id=playground_id, reserved=result)
 
 
 """
