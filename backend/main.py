@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 @app.get("/health")
-async def root():
+async def healthcheck():
     return {"message": "Hello World"}
 
 """

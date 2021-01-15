@@ -62,7 +62,7 @@ class ReservationResponse(BaseModel):
     start_at: datetime.datetime = None
     end_at: datetime.datetime = None
     time_range: model.TimeRange
-    gateway_sessions: List[GatewaySessionResponse] = []
+    gateway_sessions: Dict[model.GatewayType, GatewaySessionResponse]
 
     class Config:
         orm_mode = True

@@ -56,10 +56,21 @@ def resolve_time_range(date: datetime.date, time_range: model.TimeRange) -> Tupl
     return datetime.datetime.now(), datetime.datetime.now()
     
 def get_user_reservations(db: Session, user: model.User) -> List[schema.ReservationResponse]: 
-    return crud.fetch_user_reservations(db, user.id)
+    reservations = crud.fetch_user_reservations(db, user.id)
+    return [build_reservation_response(r) for r in reservations]
 
 def get_user_active_reservation(db: Session, user: model.User) -> schema.ReservationResponse:
-    return crud.fetch_user_active_reservation(db, user.id, util.now())
+    reservation = crud.fetch_user_active_reservation(db, user.id, util.now())
+    if reservation is None:
+        return None
+    return build_reservation_response(reservation)
+
+def build_reservation_response(r: model.Reservation) -> schema.ReservationResponse:
+    r_dict = r.__dict__
+    r_dict["gateway_sessions"] = { gateway_session.gateway.type: gateway_session for gateway_session in r_dict["gateway_sessions"]}
+    logger.info("r_dict" + str(r_dict))
+    return schema.ReservationResponse(**r_dict)
+    
     
 # KEY
 def unlock_gateway(db: Session, gateway_session: model.GatewaySession):
