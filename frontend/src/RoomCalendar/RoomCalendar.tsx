@@ -9,7 +9,7 @@ import "react-calendar/dist/Calendar.css";
 import * as H from "history";
 import { RouteComponentProps, useHistory } from "react-router-dom";
 import * as util from "../util"
-import GetReserved, { ReservedResponse, TimeRange } from "../api";
+import { CalendarResponse, TimeRange, GetMonthCalendar } from "../api";
 
 interface User {
   sessionToken: string;
@@ -17,16 +17,16 @@ interface User {
 
 function RoomCalendar() {
   let [user, setUser] = useState({ sessionToken: "test" });
-  let [reserved, setReserved] = useState({ playground_id: 0, reserved: {} });
+  let [calendar, setCalendar] = useState({ playground_id: 0, reserved: {} });
   useEffect(() => {
-    GetReserved(setReserved);
-  }, [reserved.playground_id]);
+    GetMonthCalendar(setCalendar);
+  }, [calendar.playground_id]);
   let history = useHistory();
   return (
     <Calendar
       // onChange={onChange}
       // value={value}
-      tileContent={ (props: CalendarTileProperties) => tileContent(props, reserved) }
+      tileContent={ (props: CalendarTileProperties) => tileContent(props, calendar) }
       onClickDay={(date: Date) => onClickDay(date, history)}
       activeStartDate={new Date()}
       showNeighboringMonth={false}
@@ -44,7 +44,7 @@ function onClickDay(date: Date, history: H.History) {
   history.push(`/detail/${formatDate(date)}`);
 }
 
-function tileContent(props: CalendarTileProperties, reserved: ReservedResponse): JSX.Element {
+function tileContent(props: CalendarTileProperties, reserved: CalendarResponse): JSX.Element {
   return (
     <div>
       {!isReserved(props.date, "DAY", reserved) && <p>12-17</p>}
@@ -55,7 +55,7 @@ function tileContent(props: CalendarTileProperties, reserved: ReservedResponse):
 }
 
 
-function isReserved(date: Date, timeRange: TimeRange, reserved: ReservedResponse): boolean {
+function isReserved(date: Date, timeRange: TimeRange, reserved: CalendarResponse): boolean {
   return (util.dateString(date) in reserved.reserved) && (timeRange in reserved.reserved[util.dateString(date)])
 }
 

@@ -18,7 +18,7 @@ type DetailParam = {
 type TimeSlotId = number;
 type TimeSlotInfo = {
   name: string,
-  status: boolean
+status: boolean
 };
 type TimeSlotInfos = Map<TimeSlotId, TimeSlotInfo>
 
