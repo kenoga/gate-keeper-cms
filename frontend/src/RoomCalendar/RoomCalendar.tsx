@@ -17,9 +17,9 @@ interface User {
 
 function RoomCalendar() {
   let [user, setUser] = useState({ sessionToken: "test" });
-  let [calendar, setCalendar] = useState({ playground_id: 0, reserved: {} });
+  let [calendar, setReserved] = useState({ playground_id: 0, reserved: {} });
   useEffect(() => {
-    GetMonthCalendar(setCalendar);
+    GetMonthCalendar(setReserved);
   }, [calendar.playground_id]);
   let history = useHistory();
   return (

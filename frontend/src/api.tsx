@@ -3,7 +3,8 @@ import * as util from "./util";
 
 export type TimeRange = "DAY" | "EVENING" | "NIGHT" | "OTHER"
 
-type DateReservedInfo = { [Property in keyof TimeRange]: number }
+// export type DateReservedInfo = { [Property in TimeRange]: number }
+export type DateReservedInfo = Map<TimeRange, number>
 
 export type CalendarResponse = {
   playground_id: number
@@ -35,7 +36,7 @@ export function GetMonthCalendar(setCalendar: (res: CalendarResponse) => void) {
 }
 
 
-export function GetDateCaledar(date: Date, setCalendar: (res: DateCalendarResponse) => void) {
+export function GetDateCaledar(date: Date, setCalendar: (res: DateReservedInfo) => void) {
   util.fetchGet(`/api/calendar/1/${util.dateString(date)}`, {})
   .then(response => {
     if (!response.ok) {
@@ -43,7 +44,8 @@ export function GetDateCaledar(date: Date, setCalendar: (res: DateCalendarRespon
     }
     return response.json()
   }).then((response: DateCalendarResponse) => {
-    setCalendar(response);
+    console.log(response.reserved);
+    setCalendar(util.toMap(response.reserved) as DateReservedInfo);
     console.log(response);
   }).catch(error => {
     console.error(error);

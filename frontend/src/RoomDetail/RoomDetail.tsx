@@ -1,49 +1,53 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./RoomDetail.css";
-import Calendar, {
-  CalendarTileProperties,
-  DateCallback,
-  MonthView,
-} from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import * as H from "history";
 import { RouteComponentProps, useParams } from "react-router-dom";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
+import { TimeRange, GetDateCaledar, DateReservedInfo } from "../api";
 
 type DetailParam = {
   dateString: string;
 };
 
-type TimeSlotId = number;
+type TimeSlotId = TimeRange;
 type TimeSlotInfo = {
   name: string;
-  status: boolean;
 };
-type TimeSlotInfos = Map<TimeSlotId, TimeSlotInfo>;
+type TimeSlotInfos = Map<TimeSlotId, TimeSlotInfo>
 
 
+const TIME_SLOTS: TimeSlotInfos = new Map([
+  ["DAY",     { name: "12 - 17PM" }],
+  ["EVENING", { name: "18 - 23PM" }],
+  ["NIGHT",   { name: "24 - 10PM" }],
+]);
 
-function pickEmpty(roomStatus: TimeSlotInfos): TimeSlotId | null {
-  for (let key of Array.from(roomStatus.keys())) {
-    if (roomStatus.get(key)?.status) return key;
+function pickEmpty(reservedInfo: DateReservedInfo): TimeSlotId | null {
+  for (let key of Array.from(TIME_SLOTS.keys())) {
+    console.log(key, console.log(reservedInfo.get(key as TimeSlotId)));
+    if (reservedInfo.get(key as TimeSlotId) == undefined) return key as TimeSlotId;
   }
   return null;
 }
 
-const testRoomStatus: TimeSlotInfos = new Map([
-  [1, { name: "12 - 17PM", status: false }],
-  [2, { name: "18 - 23PM", status: true }],
-  [3, { name: "24 - 05AM", status: true }],
-]);
-
 function RoomDetail(props: RouteComponentProps<DetailParam>) {
-  let [selectedTimeSlot, setTimeSlot] = useState<TimeSlotId>(1);
-  let [dateString, setDateString] = useState(props.match.params.dateString);
-  let [roomStatus, setRoomStatus] = useState(new Map());
+  let [selectedTimeSlot, setTimeSlot] = useState<TimeSlotId>("DAY");
+  let [dateString, setDateString] = useState<string>(props.match.params.dateString);
+  let [timeSlotInfos, setTimeSlotInfos] = useState<TimeSlotInfos>(TIME_SLOTS);
+  let [reservedInfo, setReservedInfo] = useState<DateReservedInfo>(new Map())
+
 
   useEffect(() => {
-    setRoomStatus(testRoomStatus);
+    GetDateCaledar(new Date(dateString), setReservedInfo)
   }, [dateString]);
+
+  useEffect(() => {
+    let emptySlot = pickEmpty(reservedInfo);
+    console.log("empty", emptySlot)
+    if (emptySlot) {
+      setTimeSlot(emptySlot);
+    }
+  }, [reservedInfo])
 
   return (
     <div className="roomDetail">
@@ -51,8 +55,8 @@ function RoomDetail(props: RouteComponentProps<DetailParam>) {
       <h3>{dateString}</h3>
 
       <div onChange={ (e) => handleChange(e, setTimeSlot) } className="radioButtons">
-        {Array.from(roomStatus.keys()).map((timeSlotId) => {
-          return returnRadioButton(timeSlotId, roomStatus, selectedTimeSlot);
+        {Array.from(timeSlotInfos.keys()).map((timeSlotId) => {
+          return returnRadioButton(timeSlotId, timeSlotInfos, reservedInfo, selectedTimeSlot);
         })}
       </div>
       <div className="text-center">
@@ -64,10 +68,11 @@ function RoomDetail(props: RouteComponentProps<DetailParam>) {
   );
 }
 
+
 function handleSubmit(selectedTimeSlot: TimeSlotId, dateString: string) {
   console.log("submit!");
   console.log(selectedTimeSlot);
-  console.log(dateString);
+  console.log(dateString); 
   fetch("https://www.google.com/").then((response) => {
     console.log(response);
   });
@@ -78,26 +83,31 @@ function handleChange(
   setTimeSlot: (timeSlot: TimeSlotId) => void
 ): void {
   console.log(e.target.value);
-  setTimeSlot(parseInt(e.target.value));
+  setTimeSlot(e.target.value);
 }
 
 function returnRadioButton(
-  timeSlotId: number,
-  roomStatus: TimeSlotInfos,
+  timeSlotId: TimeSlotId,
+  timeSlotInfos: TimeSlotInfos,
+  reservedInfo: DateReservedInfo,
   selectedTimeSlot: TimeSlotId
 ): JSX.Element {
   return (
     <Form.Check
       type="radio"
-      label={roomStatus.get(timeSlotId)?.name}
-      name={roomStatus.get(timeSlotId)?.name}
+      label={timeSlotInfos.get(timeSlotId)?.name}
+      name={timeSlotInfos.get(timeSlotId)?.name}
       value={timeSlotId}
       checked={selectedTimeSlot == timeSlotId}
-      disabled={!roomStatus.get(timeSlotId)?.status}
+      disabled={reservedInfo.get(timeSlotId) != undefined }
       className="radioButton"
     />
   );
 }
+
+// function isAble(reservedInfo: DateReservedInfo, timeSlotId: TimeSlotId) {
+//   if (reservedInfo.get(timeSlotId) == undefined)) return false
+// }
 
 
 export default RoomDetail;

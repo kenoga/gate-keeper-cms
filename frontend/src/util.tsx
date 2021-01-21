@@ -19,3 +19,8 @@ export function dateString(date: Date) {
   return (y + '-' + m + '-' + d);
 }
 
+
+
+export function toMap(object: Object) {
+  return new Map(Object.entries(object));
+}
