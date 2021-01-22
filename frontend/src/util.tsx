@@ -12,13 +12,23 @@ export function fetchGet(url: string, params: any): Promise<Response> {
 }
 
 
+export function fetchPost(url: string, params: any): Promise<Response> {
+  return fetch(`${url}`, {
+    method: 'POST',
+    mode: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(params)
+  });
+}
+
 export function dateString(date: Date) {
   var y = date.getFullYear();
   var m = ('00' + (date.getMonth()+1)).slice(-2);
   var d = ('00' + date.getDate()).slice(-2);
   return (y + '-' + m + '-' + d);
 }
-
 
 
 export function toMap(object: Object) {

@@ -17,6 +17,15 @@ export type DateCalendarResponse = {
   reserved: DateReservedInfo
 }
 
+type ReserveRequest = {
+  playground_id: number
+  date: string 
+  time_range: TimeRange
+}
+
+export type SuccessResponse = {
+  message: string
+}
 
 
 export function GetMonthCalendar(setCalendar: (res: CalendarResponse) => void) {
@@ -50,6 +59,26 @@ export function GetDateCaledar(date: Date, setCalendar: (res: DateReservedInfo) 
   }).catch(error => {
     console.error(error);
   })
+}
+
+export function PostReserve(dateString: string, timeRange: TimeRange): Promise<SuccessResponse | null>  {
+  return util.fetchPost(`/api/reserve`, {
+    playground_id: 1,
+    date: dateString,
+    time_range: timeRange
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error('Failed to reserve')
+    }
+    return response.json() 
+  }).then((response: SuccessResponse) => {
+    console.log(response);
+    return response;
+  }).catch(error => {
+    console.error(error);
+    return null;
+  })
+
 }
 
 

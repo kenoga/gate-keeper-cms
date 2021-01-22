@@ -3,7 +3,7 @@ import "./RoomDetail.css";
 import "react-calendar/dist/Calendar.css";
 import { RouteComponentProps, useParams } from "react-router-dom";
 import { Button, Form } from "react-bootstrap";
-import { TimeRange, GetDateCaledar, DateReservedInfo } from "../api";
+import { TimeRange, GetDateCaledar, DateReservedInfo, PostReserve, SuccessResponse } from "../api";
 
 type DetailParam = {
   dateString: string;
@@ -24,7 +24,6 @@ const TIME_SLOTS: TimeSlotInfos = new Map([
 
 function pickEmpty(reservedInfo: DateReservedInfo): TimeSlotId | null {
   for (let key of Array.from(TIME_SLOTS.keys())) {
-    console.log(key, console.log(reservedInfo.get(key as TimeSlotId)));
     if (reservedInfo.get(key as TimeSlotId) == undefined) return key as TimeSlotId;
   }
   return null;
@@ -43,7 +42,6 @@ function RoomDetail(props: RouteComponentProps<DetailParam>) {
 
   useEffect(() => {
     let emptySlot = pickEmpty(reservedInfo);
-    console.log("empty", emptySlot)
     if (emptySlot) {
       setTimeSlot(emptySlot);
     }
@@ -73,6 +71,13 @@ function handleSubmit(selectedTimeSlot: TimeSlotId, dateString: string) {
   console.log("submit!");
   console.log(selectedTimeSlot);
   console.log(dateString); 
+  PostReserve(dateString, selectedTimeSlot).then((response: (SuccessResponse | null)) => {
+    if (response == null) {
+    window.alert("予約が失敗しました。");
+    } else {
+      window.alert("予約が完了しました。");
+    }
+  })
   fetch("https://www.google.com/").then((response) => {
     console.log(response);
   });
@@ -82,7 +87,6 @@ function handleChange(
   e: any,
   setTimeSlot: (timeSlot: TimeSlotId) => void
 ): void {
-  console.log(e.target.value);
   setTimeSlot(e.target.value);
 }
 
