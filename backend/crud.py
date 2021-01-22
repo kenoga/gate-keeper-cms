@@ -37,8 +37,8 @@ def create_user(db: Session, email: str, encrypted_password: str, name: Optional
     db.commit()
 
 
-def create_reservation(db: Session, user_id: int, playground_id: int, date: datetime.date, start_at: datetime.datetime, end_at: datetime.datetime):
-    r = model.Reservation(user_id=user_id, playground_id=playground_id, date=date, start_at=start_at, end_at=end_at)
+def create_reservation(db: Session, user_id: int, playground_id: int, date: datetime.date, time_range: model.TimeRange, start_at: datetime.datetime, end_at: datetime.datetime):
+    r = model.Reservation(user_id=user_id, playground_id=playground_id, date=date, start_at=start_at, end_at=end_at, time_range=time_range)
     db.add(r)
     db.commit()
     
