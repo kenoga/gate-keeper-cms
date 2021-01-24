@@ -52,6 +52,10 @@ def fetch_date_reservation(db: Session, playground_id: int, date: datetime.date)
 def fetch_reservations_by_date_range(db: Session, playground_id: int, start_date: datetime.date, end_date: datetime.date):
     return db.query(model.Reservation).filter(model.Reservation.playground_id==playground_id, model.Reservation.date >= start_date, model.Reservation.date <= end_date).all()
 
+def fetch_reservations_by_time(db: Session, playground_id: int, date: datetime.date, time_range: model.TimeRange):
+    return db.query(model.Reservation).filter(model.Reservation.playground_id==playground_id, model.Reservation.date==date, model.Reservation.time_range==time_range).all()
+
+
     
     
 # GATEWAY

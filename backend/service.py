@@ -1,6 +1,7 @@
 from typing import Optional, Any, NoReturn, Tuple, List
 import datetime
 import logging
+from fastapi import HTTPException
 from . import crud
 from . import model
 from . import util
@@ -54,6 +55,11 @@ def validate_gateway_session(db: Session, gateway_session_key: str, user: model.
 def resolve_time_range(date: datetime.date, time_range: model.TimeRange) -> Tuple[datetime.datetime, datetime.datetime]:
     #  TODO: impl
     return datetime.datetime.now(), datetime.datetime.now()
+
+def check_reservation_duplicate(db: Session, playground_id: int, date: datetime.date, time_range: model.TimeRange):
+    if len(crud.fetch_reservations_by_time(db, playground_id, date, time_range)):
+        raise HTTPException(status_code=404, detail="Already reserved.")
+    
     
 def get_user_reservations(db: Session, user: model.User) -> List[schema.ReservationResponse]: 
     reservations = crud.fetch_user_reservations(db, user.id)

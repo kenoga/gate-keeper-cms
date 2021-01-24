@@ -78,9 +78,6 @@ function handleSubmit(selectedTimeSlot: TimeSlotId, dateString: string) {
       window.alert("予約が完了しました。");
     }
   })
-  fetch("https://www.google.com/").then((response) => {
-    console.log(response);
-  });
 }
 
 function handleChange(

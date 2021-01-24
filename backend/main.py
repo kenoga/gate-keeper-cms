@@ -97,6 +97,8 @@ def reserve(request: ReserveRequest, session_key: Optional[str] = Cookie(None)):
     db = SessionLocal()
     user = auth(db, session_key)
     start_at, end_at = service.resolve_time_range(request.date, request.time_range)
+    service.check_reservation_duplicate(db, request.playground_id, request.date, request.time_range)
+    
     crud.create_reservation(db, user.id, request.playground_id, request.date, request.time_range, start_at, end_at)
     return success()
 
