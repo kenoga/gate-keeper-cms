@@ -13,10 +13,10 @@ def get_first_user_with_reservations(db: Session):
     return db.query(model.User).options(joinedload(model.User.reservations)).first()
 
 def fetch_user_reservations(db: Session, user_id: int):
-    return db.query(model.Reservation).options(joinedload(model.Reservation.gateway_sessions)).filter(model.Reservation.user_id==user_id).all()
+    return db.query(model.Reservation).options(joinedload(model.Reservation.gateway_sessions)).options(joinedload(model.Reservation.playground)).filter(model.Reservation.user_id==user_id).all()
 
 def fetch_user_active_reservation(db: Session, user_id: int, time: datetime.datetime):
-    return db.query(model.Reservation).options(joinedload(model.Reservation.gateway_sessions, ).joinedload(model.GatewaySession.gateway)).options(joinedload(model.Reservation.playground)).filter(model.Reservation.user_id==user_id, model.Reservation.start_at <= time, model.Reservation.end_at >= time).first()
+    return db.query(model.Reservation).options(joinedload(model.Reservation.gateway_sessions).joinedload(model.GatewaySession.gateway)).options(joinedload(model.Reservation.playground)).filter(model.Reservation.user_id==user_id, model.Reservation.start_at <= time, model.Reservation.end_at >= time).first()
 
 
 def create_session(db: Session, user_id: int, token: str):

@@ -38,7 +38,6 @@ class GatewaySessionResponse(BaseModel):
     reservation_id: int
     start_at: datetime.datetime
     end_at: datetime.datetime
-    status: model.GatewaySessionStatus
     token: str
 
     class Config:

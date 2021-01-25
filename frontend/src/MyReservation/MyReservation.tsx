@@ -9,10 +9,22 @@ import {
   DateReservedInfo,
   PostReserve,
   SuccessResponse,
+  GetReservations,
+  Reservation
 } from "../api";
 import { Col } from "react-bootstrap";
 
 function MyReservation(props: RouteComponentProps) {
+  
+  let [reservations, setReservations] = useState<Reservation[]>([]);
+
+  useEffect(() => {
+    // TODO: call api
+    GetReservations(8, setReservations)
+
+  }, []);
+
+
   return (
     <div className="myReservation">
       <h1>予約一覧</h1>
