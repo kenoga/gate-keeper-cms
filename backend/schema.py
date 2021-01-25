@@ -54,10 +54,18 @@ class MonthCalendarResponse(BaseModel):
     playground_id: int
     reserved: Dict[datetime.date, Dict[model.TimeRange, int]]
 
+class PlaygroundResponse(BaseModel):
+    id: int
+    name: str
+    description: str    
+
+    class Config:
+        orm_mode = True
+
 class ReservationResponse(BaseModel):
     id: int
     user_id: int
-    playground_id: int
+    playground: PlaygroundResponse
     date: datetime.date
     start_at: datetime.datetime = None
     end_at: datetime.datetime = None

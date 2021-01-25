@@ -12,7 +12,7 @@ function Navigation() {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Link href="/">ホーム</Nav.Link>
-          <Nav.Link href="/mypage">マイページ</Nav.Link>
+          <Nav.Link href="/my/reservation">マイページ</Nav.Link>
           <Nav.Link href="/logout">ログアウト</Nav.Link>
         </Nav>
       </Navbar.Collapse>

@@ -88,7 +88,8 @@ def user_reservations(user_id: int, session_key: Optional[str] = Cookie(None)):
 def user_active_reservation(user_id: int, session_key: Optional[str] = Cookie(None)):
     db = SessionLocal()
     user = auth(db, session_key)
-    logger.info("now: " + str(now()))
+    if user.id != user_id:
+        unauthorized()
     return service.get_user_active_reservation(db, user)
 
     

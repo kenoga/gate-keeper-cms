@@ -14,6 +14,7 @@ import Switch from "react-bootstrap/esm/Switch";
 import Login from "./Login";
 import Logout from "./Logout";
 import Auth from "./Auth";
+import MyReservation from "./MyReservation/MyReservation";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -23,6 +24,7 @@ ReactDOM.render(
         <Auth>
           <Switch>
             <Route exact path="/" component={RoomCalendar} />
+            <Route exact path="/my/reservation" component={MyReservation} />
             <Route path="/detail/:dateString" component={RoomDetail} />
             <Route path="/logout" component={Logout} />
           </Switch>
