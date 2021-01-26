@@ -50,11 +50,13 @@ export type Reservation = {
   user_id: number
   playground: Playground
   date: Date
-  start_at?: Date
-  end_at?: Date
+  start_at?: string
+  end_at?: string
   time_range: TimeRange
   gateway_sessions: Map<GatewayType, GatewaySession>
 }
+
+
 
 type MyReservationResponse = {
   reservations: Reservation[]

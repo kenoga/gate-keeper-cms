@@ -30,6 +30,14 @@ export function dateString(date: Date) {
   return (y + '-' + m + '-' + d);
 }
 
+export function timeStrFromStrForDisp(datestr?: string) {
+  if (!datestr) {
+    return '';
+  }
+  const date = new Date(datestr);
+  return `${date.getHours()}:${date.getMinutes()}`
+}
+
 
 export function toMap(object: Object) {
   return new Map(Object.entries(object));

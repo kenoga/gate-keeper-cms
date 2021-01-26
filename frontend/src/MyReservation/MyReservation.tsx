@@ -10,92 +10,66 @@ import {
   PostReserve,
   SuccessResponse,
   GetReservations,
-  Reservation
+  Reservation,
 } from "../api";
 import { Col } from "react-bootstrap";
+import * as util from "../util"
 
 function MyReservation(props: RouteComponentProps) {
-  
   let [reservations, setReservations] = useState<Reservation[]>([]);
 
   useEffect(() => {
     // TODO: call api
-    GetReservations(8, setReservations)
-
+    GetReservations(8, setReservations);
   }, []);
-
 
   return (
     <div className="myReservation">
-      <h1>予約一覧</h1>
+      <h1 className="text-center">予約一覧</h1>
       <div className="reservationContents">
-        <Row className="justify-content-center">
-          <Col xs="11">
-            <Row>
-              <Col xs="3" md="2" lg="1">
-                2022/2/22
-              </Col>
-              <Col xs="6">12:00 ~ 18:00</Col>
-            </Row>
-
-            <Row>
-              <Col>目黒邸宅</Col>
-            </Row>
-
-            <Row className="justify-content-center">
-              <Col xs="10">
-                <Image
-                  width="100%"
-                  src="https://cdn.autoc-one.jp/images/article/201910/21141552266_d5a8_o.jpg"
-                ></Image>
-              </Col>
-            </Row>
-
-            <Row className="justify-content-center">
-              <Col xs="8">
-                <Button variant="primary" block>
-                  鍵ページにアクセス
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        {/* loop this */}
-        
-        <Row className="justify-content-center">
-          <Col xs="11">
-            <Row>
-              <Col xs="3" md="2" lg="1">
-                2022/2/22
-              </Col>
-              <Col xs="6">12:00 ~ 18:00</Col>
-            </Row>
-
-            <Row>
-              <Col>目黒邸宅</Col>
-            </Row>
-
-            <Row className="justify-content-center">
-              <Col xs="10">
-                <Image
-                  width="100%"
-                  src="https://cdn.autoc-one.jp/images/article/201910/21141552266_d5a8_o.jpg"
-                ></Image>
-              </Col>
-            </Row>
-
-            <Row className="justify-content-center">
-              <Col xs="8">
-                <Button variant="primary" block>
-                  鍵ページにアクセス
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-
+        {
+          reservations.map((reservation) => {
+            return reservationContent(reservation);
+          })
+        }
       </div>
     </div>
+  );
+}
+
+function reservationContent(reservation: Reservation) {
+  return (
+    <Row className="justify-content-center">
+      <Col xs="11">
+        <Row>
+          <Col xs="4" md="3" lg="2">
+            {reservation.date}
+          </Col>
+          <Col xs="6">{util.timeStrFromStrForDisp(reservation.start_at)} ~ {util.timeStrFromStrForDisp(reservation.end_at)}</Col>
+        </Row>
+
+        <Row>
+          <Col>{reservation.playground.name}</Col>
+        </Row>
+
+        <Row className="justify-content-center">
+          <Col xs="10">
+            <Image
+              width="100%"
+              src="https://cdn.autoc-one.jp/images/article/201910/21141552266_d5a8_o.jpg"
+            ></Image>
+          </Col>
+        </Row>
+
+        <Row className="justify-content-center">
+          <Col xs="8">
+            <Button variant="primary" block>
+              鍵ページにアクセス
+            </Button>
+          </Col>
+        </Row>
+      </Col>
+    </Row>
   );
 }
 
