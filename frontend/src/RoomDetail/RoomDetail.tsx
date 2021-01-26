@@ -3,7 +3,13 @@ import "./RoomDetail.css";
 import "react-calendar/dist/Calendar.css";
 import { RouteComponentProps, useParams } from "react-router-dom";
 import { Button, Form } from "react-bootstrap";
-import { TimeRange, GetDateCaledar, DateReservedInfo, PostReserve, SuccessResponse } from "../api";
+import {
+  TimeRange,
+  GetDateCaledar,
+  DateReservedInfo,
+  PostReserve,
+  SuccessResponse,
+} from "../api";
 
 type DetailParam = {
   dateString: string;
@@ -13,31 +19,32 @@ type TimeSlotId = TimeRange;
 type TimeSlotInfo = {
   name: string;
 };
-type TimeSlotInfos = Map<TimeSlotId, TimeSlotInfo>
-
+type TimeSlotInfos = Map<TimeSlotId, TimeSlotInfo>;
 
 const TIME_SLOTS: TimeSlotInfos = new Map([
-  ["DAY",     { name: "12 - 17PM" }],
+  ["DAY", { name: "12 - 17PM" }],
   ["EVENING", { name: "18 - 23PM" }],
-  ["NIGHT",   { name: "24 - 10PM" }],
+  ["NIGHT", { name: "24 - 10PM" }],
 ]);
 
 function pickEmpty(reservedInfo: DateReservedInfo): TimeSlotId | null {
   for (let key of Array.from(TIME_SLOTS.keys())) {
-    if (reservedInfo.get(key as TimeSlotId) == undefined) return key as TimeSlotId;
+    if (reservedInfo.get(key as TimeSlotId) == undefined)
+      return key as TimeSlotId;
   }
   return null;
 }
 
 function RoomDetail(props: RouteComponentProps<DetailParam>) {
   let [selectedTimeSlot, setTimeSlot] = useState<TimeSlotId>("DAY");
-  let [dateString, setDateString] = useState<string>(props.match.params.dateString);
+  let [dateString, setDateString] = useState<string>(
+    props.match.params.dateString
+  );
   let [timeSlotInfos, setTimeSlotInfos] = useState<TimeSlotInfos>(TIME_SLOTS);
-  let [reservedInfo, setReservedInfo] = useState<DateReservedInfo>(new Map())
-
+  let [reservedInfo, setReservedInfo] = useState<DateReservedInfo>(new Map());
 
   useEffect(() => {
-    GetDateCaledar(new Date(dateString), setReservedInfo)
+    GetDateCaledar(new Date(dateString), setReservedInfo);
   }, [dateString]);
 
   useEffect(() => {
@@ -45,20 +52,32 @@ function RoomDetail(props: RouteComponentProps<DetailParam>) {
     if (emptySlot) {
       setTimeSlot(emptySlot);
     }
-  }, [reservedInfo])
+  }, [reservedInfo]);
 
   return (
     <div className="roomDetail">
       <p>ABCマンション中目黒の詳細</p>
       <h3>{dateString}</h3>
 
-      <div onChange={ (e) => handleChange(e, setTimeSlot) } className="radioButtons">
+      <div
+        onChange={(e) => handleChange(e, setTimeSlot)}
+        className="radioButtons"
+      >
         {Array.from(timeSlotInfos.keys()).map((timeSlotId) => {
-          return returnRadioButton(timeSlotId, timeSlotInfos, reservedInfo, selectedTimeSlot);
+          return returnRadioButton(
+            timeSlotId,
+            timeSlotInfos,
+            reservedInfo,
+            selectedTimeSlot
+          );
         })}
       </div>
       <div className="text-center">
-        <Button variant="primary" onClick={ (e) => handleSubmit(selectedTimeSlot, dateString) } size="lg">
+        <Button
+          variant="primary"
+          onClick={(e) => handleSubmit(selectedTimeSlot, dateString)}
+          size="lg"
+        >
           予約する
         </Button>
       </div>
@@ -66,18 +85,19 @@ function RoomDetail(props: RouteComponentProps<DetailParam>) {
   );
 }
 
-
 function handleSubmit(selectedTimeSlot: TimeSlotId, dateString: string) {
   console.log("submit!");
   console.log(selectedTimeSlot);
-  console.log(dateString); 
-  PostReserve(dateString, selectedTimeSlot).then((response: (SuccessResponse | null)) => {
-    if (response == null) {
-    window.alert("予約が失敗しました。");
-    } else {
-      window.alert("予約が完了しました。");
+  console.log(dateString);
+  PostReserve(dateString, selectedTimeSlot).then(
+    (response: SuccessResponse | null) => {
+      if (response == null) {
+        window.alert("予約が失敗しました。");
+      } else {
+        window.alert("予約が完了しました。");
+      }
     }
-  })
+  );
 }
 
 function handleChange(
@@ -100,7 +120,7 @@ function returnRadioButton(
       name={timeSlotInfos.get(timeSlotId)?.name}
       value={timeSlotId}
       checked={selectedTimeSlot == timeSlotId}
-      disabled={reservedInfo.get(timeSlotId) != undefined }
+      disabled={reservedInfo.get(timeSlotId) != undefined}
       className="radioButton"
     />
   );
@@ -109,6 +129,5 @@ function returnRadioButton(
 // function isAble(reservedInfo: DateReservedInfo, timeSlotId: TimeSlotId) {
 //   if (reservedInfo.get(timeSlotId) == undefined)) return false
 // }
-
 
 export default RoomDetail;

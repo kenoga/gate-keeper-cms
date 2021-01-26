@@ -13,7 +13,7 @@ import {
   Reservation,
 } from "../api";
 import { Col } from "react-bootstrap";
-import * as util from "../util"
+import * as util from "../util";
 
 function MyReservation(props: RouteComponentProps) {
   let [reservations, setReservations] = useState<Reservation[]>([]);
@@ -27,11 +27,9 @@ function MyReservation(props: RouteComponentProps) {
     <div className="myReservation">
       <h1 className="text-center">予約一覧</h1>
       <div className="reservationContents">
-        {
-          reservations.map((reservation) => {
-            return reservationContent(reservation);
-          })
-        }
+        {reservations.map((reservation) => {
+          return reservationContent(reservation);
+        })}
       </div>
     </div>
   );
@@ -45,7 +43,10 @@ function reservationContent(reservation: Reservation) {
           <Col xs="4" md="3" lg="2">
             {reservation.date}
           </Col>
-          <Col xs="6">{util.timeStrFromStrForDisp(reservation.start_at)} ~ {util.timeStrFromStrForDisp(reservation.end_at)}</Col>
+          <Col xs="6">
+            {util.timeStrFromStrForDisp(reservation.start_at)} ~{" "}
+            {util.timeStrFromStrForDisp(reservation.end_at)}
+          </Col>
         </Row>
 
         <Row>

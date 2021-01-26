@@ -20,7 +20,7 @@ function RoomCalendar() {
   let [calendar, setReserved] = useState({ playground_id: 0, reserved: {} });
   useEffect(() => {
     GetMonthCalendar(setReserved);
-  }, [calendar.playground_id]);
+  }, []);
   let history = useHistory();
   return (
     <Calendar

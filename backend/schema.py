@@ -6,6 +6,7 @@ import enum
 
 from . import model
 
+
 class LoginRequest(BaseModel):
     email: str
     password: str
@@ -22,11 +23,13 @@ def success() -> SuccessResponse:
 class ReserveRequest(BaseModel):
     playground_id: int
     date: datetime.date
-    time_range: str 
+    time_range: str
+
 
 class GatewayAction(enum.Enum):
     LOCK = "lock"
-    UNLOCK = "unlock"     
+    UNLOCK = "unlock"
+
 
 class GatewayRequest(BaseModel):
     gateway_session_key: str
@@ -46,20 +49,23 @@ class GatewaySessionResponse(BaseModel):
 
 class DateCalendarResponse(BaseModel):
     playground_id: int
-    date: datetime.date 
+    date: datetime.date
     reserved: Dict[model.TimeRange, int]
-    
+
+
 class MonthCalendarResponse(BaseModel):
     playground_id: int
     reserved: Dict[datetime.date, Dict[model.TimeRange, int]]
 
+
 class PlaygroundResponse(BaseModel):
     id: int
     name: str
-    description: str    
+    description: str
 
     class Config:
         orm_mode = True
+
 
 class ReservationResponse(BaseModel):
     id: int
@@ -73,15 +79,15 @@ class ReservationResponse(BaseModel):
 
     class Config:
         orm_mode = True
-    
-    
+
+
 class MyReservationsResponse(BaseModel):
     reservations: List[ReservationResponse]
-    
+
     class Config:
         orm_mode = True
 
-    
+
 class GatewayStatusResponse(BaseModel):
     gateway_id: int
     status: str

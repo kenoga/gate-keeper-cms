@@ -30,7 +30,6 @@ def get_db():
         db.close()
 
 
-
 @app.get("/health")
 async def root():
     return {"message": "Hello World"}
