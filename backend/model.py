@@ -1,4 +1,5 @@
 import enum
+import datetime
 from .database import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import current_timestamp
@@ -12,6 +13,7 @@ class User(Base):
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
     encrypted_password = Column(String)
+    plan_id = Column(Integer, ForeignKey("plan.id"), nullable=False)
     updated_at = Column(
         DateTime,
         nullable=False,
@@ -24,6 +26,7 @@ class User(Base):
     sessions = relationship("UserSession", back_populates="user")
     reservations = relationship("Reservation", back_populates="user")
     gateway_sessions = relationship("GatewaySession", back_populates="user")
+    plan = relationship("Plan", back_populates="users")
 
 
 class UserSession(Base):
@@ -71,7 +74,7 @@ class TimeRange(enum.Enum):
     NIGHT = "NIGHT"
     OTHER = "OTHER"
 
-    def to_datetimes(self) -> tuple[int, int]:
+    def to_hour_range(self) -> tuple[int, int]:
         if self.value == "DAY":
             return (12, 17)
         elif self.value == "EVENING":
@@ -80,6 +83,21 @@ class TimeRange(enum.Enum):
             return (24, 10)
         else:
             return (0, 0)
+
+    def to_datetimes(self,
+                     date: datetime.date) -> tuple[datetime.datetime,
+                                                   datetime.datetime]:
+        date = date if self.value != "NIGHT" \
+            else date + datetime.timedelta(days=1)
+        start_hour, end_hour = self.to_hour_range()
+        start_hour, end_hour = start_hour % 24, end_hour % 23
+        return datetime.datetime(
+            year=date.year, month=date.month, day=date.day,
+            hour=start_hour, minute=0, second=0
+        ), datetime.datetime(
+            year=date.year, month=date.month, day=date.day,
+            hour=end_hour, minute=0, second=0
+        )
 
 
 class Reservation(Base):
@@ -201,3 +219,13 @@ class GatewaySession(Base):
     reservation = relationship(
         "Reservation",
         back_populates="gateway_sessions")
+
+
+class Plan(Base):
+    __tablename__ = "plan"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    monthly_limit = Column(Integer, nullable=False)
+    simul_limit = Column(Integer, nullable=False)
+
+    users = relationship("User", back_populates="plan")

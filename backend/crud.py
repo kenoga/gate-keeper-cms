@@ -139,6 +139,18 @@ def fetch_reservations_by_time(
         model.Reservation.time_range == time_range).all()
 
 
+def fetch_all_user_reservations(
+        db: Session,
+        user: model.User,
+        from_at: datetime.date,
+        until_at: datetime.date):
+    return db.query(model.Reservation).filter(
+        model.Reservation.user_id == user.id,
+        from_at <= model.Reservation.date,
+        model.Reservation.date <= until_at,
+    ).all()
+
+
 # GATEWAY
 def fetch_gateway_session_by_token(
         db: Session,

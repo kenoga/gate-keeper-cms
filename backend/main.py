@@ -1,5 +1,5 @@
 from .database import SessionLocal
-from .util import unauthorized, hash_str, randomstr
+from .util import unauthorized, hash_str, randomstr, today
 from .service import auth
 from . import service
 from .import crud
@@ -146,6 +146,9 @@ def reserve(request: ReserveRequest,
         request.date, request.time_range)
     service.check_reservation_duplicate(
         db, request.playground_id, request.date, request.time_range)
+
+    service.check_user_reservation_limit(
+        db, user, today())
 
     crud.create_reservation(
         db,

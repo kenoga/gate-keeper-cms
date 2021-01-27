@@ -65,14 +65,10 @@ def validate_gateway_session(
 
 # RESERVATION
 def resolve_time_range(
-        date: date, time_range: model.TimeRange) -> Tuple[datetime, datetime]:
+        date: date, time_range: str) -> Tuple[datetime, datetime]:
     #  TODO: impl
-    start_hour, end_hour = time_range.to_datetimes()
-    start = datetime(date.year, date.month, date.day,
-                     hour=start_hour, minute=0, second=0)
-    end = datetime(date.year, date.month, date.day,
-                   hour=end_hour, minute=0, second=0)
-    return start, end
+    time_range = model.TimeRange[time_range]
+    return time_range.to_datetimes(date)
 
 
 def check_reservation_duplicate(
@@ -87,6 +83,36 @@ def check_reservation_duplicate(
             date,
             time_range)):
         raise HTTPException(status_code=404, detail="Already reserved.")
+
+
+def check_user_reservation_limit(
+        db: Session,
+        user: model.User,
+        today: date):
+
+    month_start_day = date(today.year, today.month, 1)
+    month_end_day = date(today.year,
+                         today.month,
+                         util.month_last_day(today.year, today.month))
+
+    all_count = len(crud.fetch_all_user_reservations(
+        db, user, month_start_day, month_end_day
+    ))
+    if all_count >= user.plan.monthly_limit:
+        raise HTTPException(
+            403,
+            "月の利用可能数が上限に達しているため予約できません。 (limit: %d, count: %d)" %
+            (user.plan.monthly_limit, all_count))
+
+    simul_count = len(crud.fetch_all_user_reservations(
+        db, user, today, month_end_day
+    ))
+
+    if simul_count >= user.plan.simul_limit:
+        raise HTTPException(
+            403,
+            "同時予約可能数が上限に達しているため予約できません。 (limit: %d, count: %d)" %
+            (user.plan.simul_limit, simul_count))
 
 
 def get_user_reservations(db: Session,
