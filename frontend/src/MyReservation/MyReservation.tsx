@@ -28,14 +28,17 @@ function MyReservation(props: RouteComponentProps) {
       <h1 className="text-center">予約一覧</h1>
       <div className="reservationContents">
         {reservations.map((reservation) => {
-          return reservationContent(reservation);
+          return reservationContent(reservation, props);
         })}
       </div>
     </div>
   );
 }
 
-function reservationContent(reservation: Reservation) {
+function reservationContent(
+  reservation: Reservation,
+  props: RouteComponentProps
+) {
   return (
     <Row className="justify-content-center">
       <Col xs="11">
@@ -64,7 +67,11 @@ function reservationContent(reservation: Reservation) {
 
         <Row className="justify-content-center">
           <Col xs="8">
-            <Button variant="primary" block>
+            <Button
+              variant="primary"
+              block
+              onClick={() => props.history.push("/my/key")}
+            >
               鍵ページにアクセス
             </Button>
           </Col>

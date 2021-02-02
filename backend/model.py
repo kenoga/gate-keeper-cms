@@ -150,11 +150,6 @@ class DoorStatus(enum.Enum):
 # これはDBに保存されない。
 
 
-class EntranceStatus(enum.Enum):
-    AVAILABLE = "AVAILABLE"
-    UNAVAILABLE = "UNAVAILABLE"
-
-
 class Gateway(Base):
     __tablename__ = "gateway"
     id = Column(Integer, primary_key=True, index=True)

@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import RoomCalendar from "./RoomCalendar/RoomCalendar";
 import RoomDetail from "./RoomDetail/RoomDetail";
+import Key from "./Key/Key";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Link, Route, Router } from "react-router-dom";
 import { Container, Row } from "react-bootstrap";
@@ -25,6 +26,7 @@ ReactDOM.render(
           <Switch>
             <Route exact path="/" component={RoomCalendar} />
             <Route exact path="/my/reservation" component={MyReservation} />
+            <Route exact path="/my/key" component={Key} />
             <Route path="/detail/:dateString" component={RoomDetail} />
             <Route path="/logout" component={Logout} />
           </Switch>

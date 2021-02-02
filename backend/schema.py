@@ -90,4 +90,4 @@ class MyReservationsResponse(BaseModel):
 
 class GatewayStatusResponse(BaseModel):
     gateway_id: int
-    status: str
+    status: model.DoorStatus

@@ -144,17 +144,18 @@ def build_reservation_response(
 def unlock_gateway(db: Session, gateway_session: model.GatewaySession):
     logger.info("Gateway unlocked!! (gateway_id: %d)" %
                 gateway_session.gateway_id)
+    # TODO
 
 
 def lock_gateway(db: Session, gateway_session: model.GatewaySession):
     logger.info("Gateway locked!! (gateway_id: %d)" %
                 gateway_session.gateway_id)
-    # 紐づく
+    # TODO
 
 
 def get_gateway_status(gateway_session: model.GatewaySession):
     # TODO: wip
     if gateway_session.gateway.type == model.GatewayType.ENTRANCE:
-        return model.EntranceStatus.AVAILABLE
+        return model.DoorStatus.UNLOCKED
     else:
-        return model.DoorStatus.LOCKED
+        return model.DoorStatus.UNLOCKED

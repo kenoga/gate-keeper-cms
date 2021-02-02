@@ -8,7 +8,7 @@ import datetime
 import calendar
 from typing import Optional
 
-from fastapi import FastAPI, Cookie, Response, Depends
+from fastapi import FastAPI, Cookie, Response, Depends, HTTPException
 from fastapi.logger import logger
 
 from sqlalchemy.orm import Session
@@ -134,7 +134,12 @@ def user_active_reservation(user_id: int,
     user = auth(db, session_key)
     if user.id != user_id:
         unauthorized()
-    return service.get_user_active_reservation(db, user)
+    result = service.get_user_active_reservation(db, user)
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Active reservation not found")
+    return result
 
 
 @app.post("/api/reserve")
@@ -167,7 +172,7 @@ Key API
 # TODO: 鍵操作APIの定義
 
 
-@app.put("/api/gateway/{action}", response_model=SuccessResponse)
+@app.put("/api/gateway/{action}", response_model=GatewayStatusResponse)
 def put_gateway(request: GatewayRequest,
                 action: GatewayAction,
                 session_key: Optional[str] = Cookie(None),
@@ -181,10 +186,13 @@ def put_gateway(request: GatewayRequest,
     else:
         service.unlock_gateway(db, gateway_session)
 
-    return success()
+    return GatewayStatusResponse(
+        gateway_id=gateway_session.id,
+        status=service.get_gateway_status(gateway_session)
+    )
 
 
-@app.get("/api/gateway", response_model=SuccessResponse)
+@ app.get("/api/gateway", response_model=GatewayStatusResponse)
 def get_gateway_status(request: GatewayRequest,
                        session_key: Optional[str] = Cookie(None),
                        db: Session = Depends(get_db)):
@@ -194,4 +202,4 @@ def get_gateway_status(request: GatewayRequest,
 
     return GatewayStatusResponse(
         gateway_id=gateway_session.id,
-        status=get_gateway_status(gateway_session))
+        status=service.get_gateway_status(gateway_session))
