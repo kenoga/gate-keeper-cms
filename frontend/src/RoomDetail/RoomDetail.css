@@ -10,10 +10,18 @@ h2 {
   margin: 0 5%;
 }
 
+.radioButtons {
+  size: 16px;
+}
+
 .radioButton {
-  text: 10px;
+  font-size: 20px;
   margin: 10px;
   border: 1px black;
+}
+
+.custom-radio .custom-control-input:checked ~ .custom-control-label::before {
+  background-color: red;
 }
 
 .radioButtons {

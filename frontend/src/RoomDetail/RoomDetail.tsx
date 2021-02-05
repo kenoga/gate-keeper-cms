@@ -22,9 +22,9 @@ type TimeSlotInfo = {
 type TimeSlotInfos = Map<TimeSlotId, TimeSlotInfo>;
 
 const TIME_SLOTS: TimeSlotInfos = new Map([
-  ["DAY", { name: "12 - 17PM" }],
-  ["EVENING", { name: "18 - 23PM" }],
-  ["NIGHT", { name: "24 - 10PM" }],
+  ["DAY", { name: "12:00 - 17:00" }],
+  ["EVENING", { name: "18:00 - 23:00" }],
+  ["NIGHT", { name: "24:00 - 10:00" }],
 ]);
 
 function pickEmpty(reservedInfo: DateReservedInfo): TimeSlotId | null {
@@ -61,7 +61,7 @@ function RoomDetail(props: RouteComponentProps<DetailParam>) {
 
       <div
         onChange={(e) => handleChange(e, setTimeSlot)}
-        className="radioButtons"
+        className="radioButtons text-center"
       >
         {Array.from(timeSlotInfos.keys()).map((timeSlotId) => {
           return returnRadioButton(
@@ -116,13 +116,23 @@ function returnRadioButton(
   return (
     <Form.Check
       type="radio"
-      label={timeSlotInfos.get(timeSlotId)?.name}
       name={timeSlotInfos.get(timeSlotId)?.name}
-      value={timeSlotId}
-      checked={selectedTimeSlot == timeSlotId}
-      disabled={reservedInfo.get(timeSlotId) != undefined}
-      className="radioButton"
-    />
+      className="radioButton custom-control custom-radio"
+      id={timeSlotId}
+    >
+      <Form.Check.Input
+        type="radio"
+        checked={selectedTimeSlot == timeSlotId}
+        value={timeSlotId}
+        disabled={reservedInfo.get(timeSlotId) != undefined}
+        // className="custom-control-input"
+      ></Form.Check.Input>
+      <Form.Check.Label
+      // className="custom-control-label"
+      >
+        {timeSlotInfos.get(timeSlotId)?.name}
+      </Form.Check.Label>
+    </Form.Check>
   );
 }
 
