@@ -66,7 +66,7 @@ function reservationContent(
         </Row>
 
         <Row className="justify-content-center">
-          <Col xs="8">
+          <Col xs="10">
             <Button
               variant="primary"
               block
