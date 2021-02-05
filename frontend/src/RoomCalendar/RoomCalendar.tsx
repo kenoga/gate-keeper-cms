@@ -5,11 +5,14 @@ import Calendar, {
   DateCallback,
   MonthView,
 } from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 import * as H from "history";
 import { RouteComponentProps, useHistory } from "react-router-dom";
-import * as util from "../util"
+import * as util from "../util";
 import { CalendarResponse, TimeRange, GetMonthCalendar } from "../api";
+import { FaBed, FaQuestion } from "react-icons/fa";
+import { WiDaySunny, WiSunset, WiMoonWaxingCrescent4 } from "react-icons/wi";
+import { MdDoNotDisturbAlt } from "react-icons/md";
+import { JsxExpression } from "typescript";
 
 interface User {
   sessionToken: string;
@@ -26,7 +29,9 @@ function RoomCalendar() {
     <Calendar
       // onChange={onChange}
       // value={value}
-      tileContent={ (props: CalendarTileProperties) => tileContent(props, calendar) }
+      tileContent={(props: CalendarTileProperties) =>
+        tileContent(props, calendar)
+      }
       onClickDay={(date: Date) => onClickDay(date, history)}
       activeStartDate={new Date()}
       showNeighboringMonth={false}
@@ -44,19 +49,43 @@ function onClickDay(date: Date, history: H.History) {
   history.push(`/detail/${formatDate(date)}`);
 }
 
-function tileContent(props: CalendarTileProperties, reserved: CalendarResponse): JSX.Element {
+function tileContent(
+  props: CalendarTileProperties,
+  reserved: CalendarResponse
+): JSX.Element {
   return (
     <div>
-      {!isReserved(props.date, "DAY", reserved) && <p>12-17</p>}
-      {!isReserved(props.date, "EVENING", reserved) && <p>18-23</p>}
-      {!isReserved(props.date, "NIGHT", reserved) && <p>24-10</p>}
+      {getStatusIcon("DAY", isReserved(props.date, "DAY", reserved))}
+      {getStatusIcon("EVENING", isReserved(props.date, "NIGHT", reserved))}
+      <br></br>
+      {getStatusIcon("NIGHT", isReserved(props.date, "NIGHT", reserved))}
     </div>
   );
 }
 
+const iconMap = {
+  DAY: <WiDaySunny></WiDaySunny>,
+  EVENING: <WiMoonWaxingCrescent4></WiMoonWaxingCrescent4>,
+  NIGHT: <FaBed></FaBed>,
+  OTHER: <FaQuestion></FaQuestion>,
+};
 
-function isReserved(date: Date, timeRange: TimeRange, reserved: CalendarResponse): boolean {
-  return (util.dateString(date) in reserved.reserved) && (timeRange in reserved.reserved[util.dateString(date)])
+function getStatusIcon(timeRange: TimeRange, isReserved: boolean): JSX.Element {
+  if (isReserved) {
+    return <MdDoNotDisturbAlt></MdDoNotDisturbAlt>;
+  }
+  return iconMap[timeRange];
+}
+
+function isReserved(
+  date: Date,
+  timeRange: TimeRange,
+  reserved: CalendarResponse
+): boolean {
+  return (
+    util.dateString(date) in reserved.reserved &&
+    timeRange in reserved.reserved[util.dateString(date)]
+  );
 }
 
 function formatDate(date: Date): string {

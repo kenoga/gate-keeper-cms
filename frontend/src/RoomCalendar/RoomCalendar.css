@@ -30,6 +30,8 @@
 
 .react-calendar {
   width: auto !important;
+  font-family: "Noto Sans JP", sans-serif !important;
+  border: 0 !important;
 }
 
 @keyframes App-logo-spin {
@@ -39,4 +41,12 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.react-calendar__tile--now {
+  background-color: #57be85 !important;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #d87575 !important;
 }
