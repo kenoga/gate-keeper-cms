@@ -38,12 +38,25 @@ export function dateString(date: Date) {
   return y + "-" + m + "-" + d;
 }
 
+export function dateStringForDisp(datestr?: string) {
+  if (!datestr) {
+    return "";
+  }
+  const date = new Date(datestr);
+  var y = date.getFullYear();
+  var m = ("00" + (date.getMonth() + 1)).slice(-2);
+  var d = ("00" + date.getDate()).slice(-2);
+  return y + "/" + m + "/" + d;
+}
+
 export function timeStrFromStrForDisp(datestr?: string) {
   if (!datestr) {
     return "";
   }
   const date = new Date(datestr);
-  return `${date.getHours()}:${date.getMinutes()}`;
+  var h = ("00" + date.getHours()).slice(-2);
+  var m = ("00" + date.getMinutes()).slice(-2);
+  return `${h}:${m}`;
 }
 
 export function toMap(object: Object) {

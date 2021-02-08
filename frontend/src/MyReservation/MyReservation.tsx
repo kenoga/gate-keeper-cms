@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./MyReservation.css";
 import "react-calendar/dist/Calendar.css";
 import { RouteComponentProps, useParams } from "react-router-dom";
-import { Button, Form, Image, Row } from "react-bootstrap";
+import { Button, Card, Form, Image, Row } from "react-bootstrap";
 import {
   TimeRange,
   GetDateCaledar,
@@ -40,42 +40,30 @@ function reservationContent(
   props: RouteComponentProps
 ) {
   return (
-    <Row className="justify-content-center">
-      <Col xs="11">
-        <Row>
-          <Col xs="4" md="3" lg="2">
-            {reservation.date}
-          </Col>
-          <Col xs="6">
-            {util.timeStrFromStrForDisp(reservation.start_at)} ~{" "}
-            {util.timeStrFromStrForDisp(reservation.end_at)}
-          </Col>
-        </Row>
-
-        <Row>
-          <Col>{reservation.playground.name}</Col>
-        </Row>
-
-        <Row className="justify-content-center">
-          <Col xs="10">
-            <Image
-              width="100%"
-              src="https://cdn.autoc-one.jp/images/article/201910/21141552266_d5a8_o.jpg"
-            ></Image>
-          </Col>
-        </Row>
-
-        <Row className="justify-content-center">
-          <Col xs="10">
+    <Row className="justify-content-center mb-3">
+      <Col xs="11" lg="8">
+        <Card>
+          <Card.Img
+            variant="top"
+            src="https://cdn.autoc-one.jp/images/article/201910/21141552266_d5a8_o.jpg"
+          />
+          <Card.Body>
+            <Card.Title>
+              {util.dateStringForDisp(reservation.start_at!!)}
+              {"  "}
+              {util.timeStrFromStrForDisp(reservation.start_at)} ~{" "}
+              {util.timeStrFromStrForDisp(reservation.end_at)}
+            </Card.Title>
+            <Card.Text>{reservation.playground.name}</Card.Text>
             <Button
               variant="primary"
               block
               onClick={() => props.history.push("/my/key")}
             >
-              鍵ページにアクセス
+              鍵ページへ
             </Button>
-          </Col>
-        </Row>
+          </Card.Body>
+        </Card>
       </Col>
     </Row>
   );
