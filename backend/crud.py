@@ -18,14 +18,11 @@ def get_first_user_with_reservations(db: Session):
 
 
 def fetch_user_reservations(db: Session, user_id: int):
-    return db.query(
-        model.Reservation).options(
-        joinedload(
-            model.Reservation.gateway_sessions)).options(
-                joinedload(
-                    model.Reservation.playground)).filter(
-                        model.Reservation.user_id == user_id).order_by(
-                            model.Reservation.start_at.desc()).all()
+    return db.query(model.Reservation) \
+        .options(joinedload(model.Reservation.gateway_sessions)) \
+        .options(joinedload(model.Reservation.playground)) \
+        .filter(model.Reservation.user_id == user_id) \
+        .order_by(model.Reservation.start_at.desc()).all()
 
 
 def fetch_user_active_reservation(

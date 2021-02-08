@@ -2,7 +2,7 @@ import { RouteComponentProps } from "react-router-dom";
 
 import React, { useEffect, useState } from "react";
 import "./Key.css";
-import { ToggleButton } from "react-bootstrap";
+import { Card, Col, Row, ToggleButton } from "react-bootstrap";
 import { Button, FormControlLabel, Switch } from "@material-ui/core";
 import { IconButton } from "@material-ui/core";
 import { GetActiveReservation, Reservation, ToggleGateway } from "../api";
@@ -23,32 +23,41 @@ function Key(props: RouteComponentProps) {
     <div className="myKey">
       {reservation && (
         <div>
-          <h1 className="text-center">目黒マンション</h1>
+          <h2 className="text-center">目黒マンション</h2>
+          <Row className="justify-content-center my-3">
+            <Col xs="11">
+              <Card>
+                <Card.Body>
+                  <Card.Title>エントランス</Card.Title>
+                  <Button variant="contained" color="primary" fullWidth>
+                    解錠
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
 
-          <h3 className="text-center">エントランス</h3>
-
-          <div className="mx-auto" style={{ width: "100px" }}>
-            <Button variant="contained" color="primary" fullWidth>
-              解錠
-            </Button>
-          </div>
-
-          <h3 className="text-center">玄関</h3>
-
-          <div className="mx-auto" style={{ width: "100px" }}>
-            <FormControlLabel
-              control={
-                <Switch
-                  size="medium"
-                  checked={doorOpened}
-                  onChange={(e) =>
-                    toggleDoor(reservation!!, doorOpened, setDoorOpened)
-                  }
-                ></Switch>
-              }
-              label={doorOpened.toString()}
-            ></FormControlLabel>
-          </div>
+          <Row className="justify-content-center my-3">
+            <Col xs="11">
+              <Card>
+                <Card.Body>
+                  <Card.Title>玄関</Card.Title>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        size="medium"
+                        checked={doorOpened}
+                        onChange={(e) =>
+                          toggleDoor(reservation!!, doorOpened, setDoorOpened)
+                        }
+                      ></Switch>
+                    }
+                    label={doorOpened.toString()}
+                  ></FormControlLabel>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
         </div>
       )}
     </div>

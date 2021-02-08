@@ -75,7 +75,7 @@ function RoomDetail(props: RouteComponentProps<DetailParam>) {
       <div className="text-center">
         <Button
           variant="primary"
-          onClick={(e) => handleSubmit(selectedTimeSlot, dateString)}
+          onClick={(e) => handleSubmit(props, selectedTimeSlot, dateString)}
           size="lg"
         >
           予約する
@@ -85,7 +85,11 @@ function RoomDetail(props: RouteComponentProps<DetailParam>) {
   );
 }
 
-function handleSubmit(selectedTimeSlot: TimeSlotId, dateString: string) {
+function handleSubmit(
+  props: RouteComponentProps,
+  selectedTimeSlot: TimeSlotId,
+  dateString: string
+) {
   console.log("submit!");
   console.log(selectedTimeSlot);
   console.log(dateString);
@@ -95,6 +99,7 @@ function handleSubmit(selectedTimeSlot: TimeSlotId, dateString: string) {
         window.alert("予約が失敗しました。");
       } else {
         window.alert("予約が完了しました。");
+        props.history.push("/my/reservation");
       }
     }
   );

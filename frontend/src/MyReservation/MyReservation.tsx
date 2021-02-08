@@ -25,13 +25,23 @@ function MyReservation(props: RouteComponentProps) {
 
   return (
     <div className="myReservation">
-      <h1 className="text-center">予約一覧</h1>
-      <div className="reservationContents">
+      <h2 className="text-center">予約一覧</h2>
+      <div className="reservationContents pt-3">
         {reservations.map((reservation) => {
           return reservationContent(reservation, props);
         })}
       </div>
     </div>
+  );
+}
+
+function isEble(reservation: Reservation): boolean {
+  let now = new Date();
+  if (reservation.start_at == null || reservation.end_at == null) {
+    return false;
+  }
+  return (
+    new Date(reservation.start_at) <= now && now <= new Date(reservation.end_at)
   );
 }
 
@@ -59,8 +69,11 @@ function reservationContent(
               variant="primary"
               block
               onClick={() => props.history.push("/my/key")}
+              disabled={!isEble(reservation)}
             >
-              鍵ページへ
+              {isEble(reservation)
+                ? "鍵ページへ"
+                : "予約時間内になると鍵ページにアクセスできます"}
             </Button>
           </Card.Body>
         </Card>
