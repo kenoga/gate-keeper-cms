@@ -65,16 +65,23 @@ function reservationContent(
               {util.timeStrFromStrForDisp(reservation.end_at)}
             </Card.Title>
             <Card.Text>{reservation.playground.name}</Card.Text>
-            <Button
-              variant="primary"
-              block
-              onClick={() => props.history.push("/my/key")}
-              disabled={!isEble(reservation)}
-            >
-              {isEble(reservation)
-                ? "鍵ページへ"
-                : "予約時間内になると鍵ページにアクセスできます"}
-            </Button>
+            {!isEble(reservation) && (
+              <Card.Text>
+                <small className="text-muted">
+                  予約時間内になると鍵ページにアクセスできます
+                </small>
+              </Card.Text>
+            )}
+
+            {isEble(reservation) && (
+              <Button
+                variant="primary"
+                block
+                onClick={() => props.history.push("/my/key")}
+              >
+                鍵ページへ
+              </Button>
+            )}
           </Card.Body>
         </Card>
       </Col>
