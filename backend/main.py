@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from .schema import SuccessResponse, LoginRequest, success, GatewayRequest, \
     GatewayAction, GatewayStatusResponse, \
     ReservationResponse, ReserveRequest, MyReservationsResponse, \
-    DateCalendarResponse, MonthCalendarResponse
+    DateCalendarResponse, MonthCalendarResponse, ReservationCountResponse
 
 app = FastAPI()
 
@@ -164,6 +164,22 @@ def reserve(request: ReserveRequest,
         start_at,
         end_at)
     return success()
+
+
+@app.get("/api/user/reservations/count",
+         response_model=ReservationCountResponse)
+def user_reservation_count(session_key: Optional[str] = Cookie(None),
+                           db: Session = Depends(get_db)):
+    user = auth(db, session_key)
+
+    all_count, simul_count = service.get_users_reservation_count(
+        db, user, today()
+    )
+    return ReservationCountResponse(
+        all_count=all_count,
+        simul_count=simul_count,
+        all_limit=user.plan.monthly_limit,
+        simul_limit=user.plan.simul_limit)
 
 
 """

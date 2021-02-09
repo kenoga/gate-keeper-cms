@@ -8,11 +8,18 @@ import Calendar, {
 import * as H from "history";
 import { RouteComponentProps, useHistory } from "react-router-dom";
 import * as util from "../util";
-import { CalendarResponse, TimeRange, GetMonthCalendar } from "../api";
+import {
+  CalendarResponse,
+  TimeRange,
+  GetMonthCalendar,
+  UserReservationCountResponse,
+  GetUserReservationCount,
+} from "../api";
 import { FaBed, FaQuestion } from "react-icons/fa";
 import { WiDaySunny, WiSunset, WiMoonWaxingCrescent4 } from "react-icons/wi";
 import { MdDoNotDisturbAlt } from "react-icons/md";
 import { JsxExpression } from "typescript";
+import { Col, Row } from "react-bootstrap";
 
 interface User {
   sessionToken: string;
@@ -21,26 +28,53 @@ interface User {
 function RoomCalendar() {
   let [user, setUser] = useState({ sessionToken: "test" });
   let [calendar, setReserved] = useState({ playground_id: 0, reserved: {} });
+  let [
+    userReservationCount,
+    setUserReservationCount,
+  ] = useState<UserReservationCountResponse>({
+    all_count: 0,
+    simul_count: 0,
+    all_limit: 0,
+    simul_limit: 0,
+  });
+
   useEffect(() => {
     GetMonthCalendar(setReserved);
+    GetUserReservationCount(setUserReservationCount);
   }, []);
   let history = useHistory();
   return (
-    <Calendar
-      // onChange={onChange}
-      // value={value}
-      tileContent={(props: CalendarTileProperties) =>
-        tileContent(props, calendar)
-      }
-      onClickDay={(date: Date) => onClickDay(date, history)}
-      activeStartDate={new Date()}
-      showNeighboringMonth={false}
-      tileDisabled={tileDisabled}
-      prevLabel=""
-      prev2Label=""
-      nextLabel=""
-      next2Label=""
-    />
+    <div>
+      <Calendar
+        // onChange={onChange}
+        // value={value}
+        tileContent={(props: CalendarTileProperties) =>
+          tileContent(props, calendar)
+        }
+        onClickDay={(date: Date) => onClickDay(date, history)}
+        activeStartDate={new Date()}
+        showNeighboringMonth={false}
+        tileDisabled={tileDisabled}
+        prevLabel=""
+        prev2Label=""
+        nextLabel=""
+        next2Label=""
+      />
+      <Row>
+        <Col xs="12" className="text-center">
+          <small>
+            合計予約数: {userReservationCount.all_count} /{" "}
+            {userReservationCount.all_limit}
+          </small>
+        </Col>
+        <Col xs="12" className="text-center">
+          <small>
+            同時予約数: {userReservationCount.simul_count} /{" "}
+            {userReservationCount.simul_limit}
+          </small>
+        </Col>
+      </Row>
+    </div>
   );
 }
 

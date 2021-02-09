@@ -206,3 +206,30 @@ export function ToggleGateway(
       console.error(error);
     });
 }
+
+export type UserReservationCountResponse = {
+  all_count: number;
+  simul_count: number;
+  all_limit: number;
+  simul_limit: number;
+};
+
+export function GetUserReservationCount(
+  setReservationCount: (response: UserReservationCountResponse) => void
+) {
+  return util
+    .fetchGet(`/api/user/reservations/count`, {})
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to get user reservation count.");
+      }
+      return response.json();
+    })
+    .then((response: UserReservationCountResponse) => {
+      console.log(response);
+      setReservationCount(response);
+    })
+    .then((error) => {
+      console.error(error);
+    });
+}

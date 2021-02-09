@@ -81,6 +81,13 @@ class ReservationResponse(BaseModel):
         orm_mode = True
 
 
+class ReservationCountResponse(BaseModel):
+    all_count: int
+    simul_count: int
+    all_limit: int
+    simul_limit: int
+
+
 class MyReservationsResponse(BaseModel):
     reservations: List[ReservationResponse]
 
