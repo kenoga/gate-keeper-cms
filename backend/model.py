@@ -14,6 +14,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     encrypted_password = Column(String)
     plan_id = Column(Integer, ForeignKey("plan.id"), nullable=False)
+    admin = Column(Boolean, nullable=False, default=False)
     updated_at = Column(
         DateTime,
         nullable=False,

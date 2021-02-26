@@ -16,7 +16,8 @@ from sqlalchemy.orm import Session
 from .schema import SuccessResponse, LoginRequest, success, GatewayRequest, \
     GatewayAction, GatewayStatusResponse, \
     ReservationResponse, ReserveRequest, MyReservationsResponse, \
-    DateCalendarResponse, MonthCalendarResponse, ReservationCountResponse
+    DateCalendarResponse, MonthCalendarResponse, ReservationCountResponse, \
+    SignUpRequest, AdminMonthCalendarResponse 
 
 app = FastAPI()
 
@@ -39,15 +40,6 @@ async def root():
 """
 User related API
 """
-
-
-@app.post("/api/user", response_model=SuccessResponse)
-def post_user(param: LoginRequest,
-              db: Session = Depends(get_db)) -> SuccessResponse:
-    crud.create_user(db, param.email, hash_str(param.password), "")
-    return success()
-
-
 @app.post("/api/login", response_model=SuccessResponse)
 def login(param: LoginRequest,
           response: Response,
@@ -66,6 +58,8 @@ def login(param: LoginRequest,
         crud.create_session(db, user.id, token)
         logger.info("new session token: " + token)
         response.set_cookie("session_key", token)
+    if user.admin:
+        response.set_cookie("is_admin", "true")
     return success()
 
 
@@ -73,7 +67,7 @@ def login(param: LoginRequest,
 def logout(response: Response,
            session_key: Optional[str] = Cookie(None),
            db: Session = Depends(get_db)) -> SuccessResponse:
-    user = auth(db, session_key)
+    auth(db, session_key)
     response.delete_cookie("session_key")
     return success()
 
@@ -106,17 +100,16 @@ def get_month_reservation(playground_id: int,
     return MonthCalendarResponse(playground_id=playground_id, reserved=result)
 
 
+
+
 """
 Reservation API
 """
-
-
 @app.get("/api/user/{user_id}/reservations",
          response_model=MyReservationsResponse)
 def user_reservations(user_id: int,
                       session_key: Optional[str] = Cookie(None),
                       db: Session = Depends(get_db)):
-    # TODO: sorting
     try:
         user = auth(db, session_key)
         return MyReservationsResponse(
@@ -171,7 +164,6 @@ def reserve(request: ReserveRequest,
 def user_reservation_count(session_key: Optional[str] = Cookie(None),
                            db: Session = Depends(get_db)):
     user = auth(db, session_key)
-
     all_count, simul_count = service.get_users_reservation_count(
         db, user, today()
     )
@@ -186,7 +178,6 @@ def user_reservation_count(session_key: Optional[str] = Cookie(None),
 Key API
 """
 # TODO: 鍵操作APIの定義
-
 
 @app.put("/api/gateway/{action}", response_model=GatewayStatusResponse)
 def put_gateway(request: GatewayRequest,
@@ -219,3 +210,28 @@ def get_gateway_status(request: GatewayRequest,
     return GatewayStatusResponse(
         gateway_id=gateway_session.id,
         status=service.get_gateway_status(gateway_session))
+
+
+# Admin API
+@app.post("/api/admin/user/", response_model=SuccessResponse)
+def post_user(param: SignUpRequest,
+              session_key: Optional[str] = Cookie(None),
+              db: Session = Depends(get_db)) -> SuccessResponse:
+    service.auth_admin(db, session_key)
+    crud.create_user(db, param.email, hash_str(param.password), param.name)
+    return success()
+
+
+@app.get("/api/admin/calendar/{playground_id}",
+         response_model=AdminMonthCalendarResponse)
+def get_month_reservation(playground_id: int,
+                          year: int,
+                          month: int,
+                          db: Session = Depends(get_db)):
+    start = datetime.date(year, month, 1)
+    end = datetime.date(year, month, calendar.monthrange(year, month)[1])
+    result = service.get_calendar_with_user(db, playground_id, start, end)
+    logger.info(result)
+    return AdminMonthCalendarResponse(
+        playground_id=playground_id, 
+        reserved=result)

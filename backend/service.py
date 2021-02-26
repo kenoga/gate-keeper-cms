@@ -42,11 +42,34 @@ def get_calendar(
     return d
 
 
-def auth(db: Session, session_key: Optional[Any]) -> NoReturn:
+def get_calendar_with_user(
+        db: Session,
+        playground_id: int,
+        start_date: date,
+        end_date: date):
+    reservations = crud.fetch_reservations_by_date_range(
+        db, playground_id, start_date, end_date)
+    reservations = [r for r in reservations if r.status ==
+                    model.ReservationStatus.RESERVED]
+
+    d = defaultdict(dict)
+    for r in reservations:
+        d[r.date][r.time_range.name] = r.user
+    return d
+
+
+def auth(db: Session, session_key: Optional[Any]) -> model.User:
     if session_key is None:
         util.unauthorized()
     user = crud.fetch_user_by_session_token(db, session_key)
     if user is None:
+        util.unauthorized()
+    return user
+
+
+def auth_admin(db: Session, session_key: Optional[Any]) -> model.User:
+    user = auth(db, session_key)
+    if not user.admin:
         util.unauthorized()
     return user
 

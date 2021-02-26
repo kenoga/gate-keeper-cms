@@ -80,10 +80,11 @@ CREATE TABLE `user` (
   `email` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `encrypted_password` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `plan_id` int(11) unsigned NOT NULL,
+  `admin` tinyint(1) DEFAULT '0',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Create syntax for TABLE 'user_session'
 CREATE TABLE `user_session` (

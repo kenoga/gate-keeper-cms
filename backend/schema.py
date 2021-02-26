@@ -7,6 +7,12 @@ import enum
 from . import model
 
 
+class SignUpRequest(BaseModel):
+    email: str
+    password: str
+    name: str
+
+
 class LoginRequest(BaseModel):
     email: str
     password: str
@@ -56,6 +62,20 @@ class DateCalendarResponse(BaseModel):
 class MonthCalendarResponse(BaseModel):
     playground_id: int
     reserved: Dict[datetime.date, Dict[model.TimeRange, int]]
+
+
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+
+    class Config:
+        orm_mode = True
+
+
+class AdminMonthCalendarResponse(BaseModel):
+    playground_id: int
+    reserved: Dict[datetime.date, Dict[model.TimeRange, UserResponse]]
 
 
 class PlaygroundResponse(BaseModel):

@@ -31,13 +31,13 @@ def fetch_user_active_reservation(
         time: datetime.datetime):
     return db.query(model.Reservation) \
         .options(
-        joinedload(
-            model.Reservation.gateway_sessions)
-        .joinedload(
-            model.GatewaySession.gateway)) \
+            joinedload(
+                model.Reservation.gateway_sessions)
+            .joinedload(
+                model.GatewaySession.gateway)) \
         .options(
-        joinedload(
-            model.Reservation.playground)) \
+            joinedload(
+                model.Reservation.playground)) \
         .filter(
         model.Reservation.user_id == user_id,
         model.Reservation.start_at <= time,
@@ -52,11 +52,11 @@ def create_session(db: Session, user_id: int, token: str):
 
 def fetch_user_by_session_token(db: Session,
                                 session_key: str) -> Optional[model.User]:
-    session = db.query(
-        model.UserSession).options(
-        joinedload(
-            model.UserSession.user)).filter(
-                model.UserSession.token == session_key).first()
+    session = db.query(model.UserSession) \
+        .options(
+            joinedload(model.UserSession.user)) \
+        .filter(model.UserSession.token == session_key) \
+        .first()
     if session is None:
         return None
     return session.user
@@ -97,22 +97,24 @@ def create_reservation(
 def fetch_user_with_sessions(db: Session,
                              email: str,
                              encrypted_password: str) -> Optional[model.User]:
-    return db.query(
-        model.User).options(
-        joinedload(
-            model.User.sessions)).filter(
-                model.User.email == email,
-        model.User.encrypted_password == encrypted_password).first()
+    return db.query(model.User) \
+        .options(
+            joinedload(model.User.sessions)) \
+        .filter(
+            model.User.email == email,
+            model.User.encrypted_password == encrypted_password) \
+        .first()
 
 
 def fetch_date_reservation(
         db: Session,
         playground_id: int,
         date: datetime.date):
-    return db.query(
-        model.Reservation).filter(
-        model.Reservation.playground_id == playground_id,
-        model.Reservation.date == date).all()
+    return db.query(model.Reservation) \
+        .filter(
+            model.Reservation.playground_id == playground_id,
+            model.Reservation.date == date) \
+        .all()
 
 
 def fetch_reservations_by_date_range(
@@ -120,11 +122,14 @@ def fetch_reservations_by_date_range(
         playground_id: int,
         start_date: datetime.date,
         end_date: datetime.date):
-    return db.query(
-        model.Reservation).filter(
-        model.Reservation.playground_id == playground_id,
-        model.Reservation.date >= start_date,
-        model.Reservation.date <= end_date).all()
+    return db.query(model.Reservation) \
+        .options(
+            joinedload(model.Reservation.user)) \
+        .filter(
+            model.Reservation.playground_id == playground_id,
+            model.Reservation.date >= start_date,
+            model.Reservation.date <= end_date) \
+        .all()
 
 
 def fetch_reservations_by_time(
@@ -132,11 +137,12 @@ def fetch_reservations_by_time(
         playground_id: int,
         date: datetime.date,
         time_range: model.TimeRange):
-    return db.query(
-        model.Reservation).filter(
-        model.Reservation.playground_id == playground_id,
-        model.Reservation.date == date,
-        model.Reservation.time_range == time_range).all()
+    return db.query(model.Reservation) \
+        .filter(
+            model.Reservation.playground_id == playground_id,
+            model.Reservation.date == date,
+            model.Reservation.time_range == time_range) \
+        .all()
 
 
 def fetch_all_user_reservations(
@@ -144,11 +150,12 @@ def fetch_all_user_reservations(
         user: model.User,
         from_at: datetime.date,
         until_at: datetime.date):
-    return db.query(model.Reservation).filter(
-        model.Reservation.user_id == user.id,
-        from_at <= model.Reservation.date,
-        model.Reservation.date <= until_at,
-    ).all()
+    return db.query(model.Reservation) \
+        .filter(
+            model.Reservation.user_id == user.id,
+            from_at <= model.Reservation.date,
+            model.Reservation.date <= until_at) \
+        .all()
 
 
 # GATEWAY
