@@ -90,7 +90,7 @@ function tileContent(
   return (
     <div>
       {getStatusIcon("DAY", isReserved(props.date, "DAY", reserved))}
-      {getStatusIcon("EVENING", isReserved(props.date, "NIGHT", reserved))}
+      {getStatusIcon("EVENING", isReserved(props.date, "EVENING", reserved))}
       <br></br>
       {getStatusIcon("NIGHT", isReserved(props.date, "NIGHT", reserved))}
     </div>
