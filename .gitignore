@@ -133,3 +133,6 @@ frontend/node_modules/
 
 # local db
 db/data/
+
+# terraform
+teraform/.terraform/prividers/
