@@ -20,12 +20,22 @@ CREATE TABLE `gateway_session` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `gateway_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
+  `reservation_id` int(11) unsigned DEFAULT NULL,
   `start_at` datetime NOT NULL,
   `end_at` datetime NOT NULL,
   `status` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `token` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Create syntax for TABLE 'plan'
+CREATE TABLE `plan` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `monthly_limit` int(11) unsigned NOT NULL,
+  `simul_limit` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -37,7 +47,7 @@ CREATE TABLE `playground` (
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Create syntax for TABLE 'reservation'
 CREATE TABLE `reservation` (
@@ -45,12 +55,14 @@ CREATE TABLE `reservation` (
   `user_id` int(10) unsigned NOT NULL,
   `playground_id` int(11) unsigned NOT NULL,
   `date` date NOT NULL,
-  `time_range_id` int(11) unsigned NOT NULL,
+  `start_at` datetime DEFAULT NULL,
+  `end_at` datetime DEFAULT NULL,
+  `time_range` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT 'OTHER',
   `status` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'RESERVED',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Create syntax for TABLE 'time_range'
 CREATE TABLE `time_range` (
@@ -59,7 +71,7 @@ CREATE TABLE `time_range` (
   `start_hour` int(11) unsigned NOT NULL,
   `end_hour` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Create syntax for TABLE 'user'
 CREATE TABLE `user` (
@@ -67,10 +79,11 @@ CREATE TABLE `user` (
   `name` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `email` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `encrypted_password` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `plan_id` int(11) unsigned NOT NULL,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Create syntax for TABLE 'user_session'
 CREATE TABLE `user_session` (
@@ -81,4 +94,4 @@ CREATE TABLE `user_session` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `index_on_token` (`token`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
