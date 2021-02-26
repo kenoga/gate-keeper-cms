@@ -36,29 +36,29 @@ resource "aws_security_group_rule" "rds_inbound_sgr_http" {
 
 resource "aws_db_subnet_group" "main" {
   name       = var.prefix
-  subnet_ids = [aws_subnet.private_1.id, aws_subnet.private_2.id]
+  subnet_ids = [aws_subnet.public_1.id, aws_subnet.public_2.id]
 
   tags = merge(var.default_tags, {
     Name = var.prefix
   })
 }
 
-resource "aws_db_instance" "default" {
-  identifier             = var.prefix
-  allocated_storage      = 10
-  engine                 = "mysql"
-  engine_version         = "8.0"
-  instance_class         = "db.t3.micro"
-  name                   = "gatekeeper"
-  username               = "admin"
-  password               = "anSD7eXLbHgztsJ5"
-  parameter_group_name   = aws_db_parameter_group.default.name
-  skip_final_snapshot    = true
-  availability_zone      = "ap-northeast-1a"
-  db_subnet_group_name   = aws_db_subnet_group.main.name
-  vpc_security_group_ids = [aws_security_group.rds.id]
+# resource "aws_db_instance" "default" {
+#   identifier             = var.prefix
+#   allocated_storage      = 10
+#   engine                 = "mysql"
+#   engine_version         = "8.0"
+#   instance_class         = "db.t3.micro"
+#   name                   = "gatekeeper"
+#   username               = "admin"
+#   password               = "anSD7eXLbHgztsJ5"
+#   parameter_group_name   = aws_db_parameter_group.default.name
+#   skip_final_snapshot    = true
+#   availability_zone      = "ap-northeast-1a"
+#   db_subnet_group_name   = aws_db_subnet_group.main.name
+#   vpc_security_group_ids = [aws_security_group.rds.id]
 
-  tags = merge(var.default_tags, {
-    Name = "${var.prefix}-mysql"
-  })
-}
+#   tags = merge(var.default_tags, {
+#     Name = "${var.prefix}-mysql"
+#   })
+# }
