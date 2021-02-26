@@ -1,8 +1,14 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://local:local@db/gate_keeper_local"
+DB_HOST = os.environ['DB_HOST']
+DB_USER = os.environ['DB_USER']
+DB_PASS = os.environ['DB_PASS']
+DB_NAME = os.environ['DB_NAME']
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://%s:%s@%s/%s" \
+    % (DB_USER, DB_PASS, DB_HOST, DB_NAME)
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,

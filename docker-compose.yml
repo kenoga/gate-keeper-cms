@@ -20,15 +20,31 @@ services:
       - app-net
   api:
     container_name: gatekeeper-backend
-    build: .
+    build:
+      context: .
+      dockerfile: DockerfileDev
     restart: always
     volumes:
       - .:/app/
     ports:
       - 5000:8000
+    environment: 
+      - DB_HOST=db
+      - DB_USER=local
+      - DB_PASS=local
+      - DB_NAME=gate_keeper_local
     networks: 
       - app-net
-
+  # nginx:
+  #   container_name: nginx 
+  #   build:
+  #     context: .
+  #     dockerfile: NginxDockerfile
+  #   restart: always
+  #   ports:
+  #     - 3333:80
+  #   networks: 
+  #     - app-net
 networks:
   app-net:
     driver: bridge

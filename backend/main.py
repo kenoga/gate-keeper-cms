@@ -31,7 +31,7 @@ def get_db():
         db.close()
 
 
-@app.get("/health")
+@app.get("/api/health")
 async def root():
     return {"message": "Hello World"}
 
@@ -208,7 +208,7 @@ def put_gateway(request: GatewayRequest,
     )
 
 
-@ app.get("/api/gateway", response_model=GatewayStatusResponse)
+@app.get("/api/gateway", response_model=GatewayStatusResponse)
 def get_gateway_status(request: GatewayRequest,
                        session_key: Optional[str] = Cookie(None),
                        db: Session = Depends(get_db)):

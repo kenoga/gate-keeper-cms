@@ -1,10 +1,6 @@
 FROM python:3.9.0-alpine
 
 WORKDIR /app
-COPY ./backend /app/backend
-COPY ./frontend/build /app/frontendbuild
-COPY ./start_backend.py /app/
-COPY ./requirements.txt /app/
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
