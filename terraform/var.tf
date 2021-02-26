@@ -1,6 +1,7 @@
 variable "allowed_ips" {
   type = map(string)
   default = {
+    nogawaHome = "110.2.118.166/32"
   }
 }
 
