@@ -135,4 +135,4 @@ frontend/node_modules/
 db/data/
 
 # terraform
-teraform/.terraform/prividers/
+terraform/.terraform/prividers/
