@@ -22,6 +22,10 @@ class SuccessResponse(BaseModel):
     message: str
 
 
+class LoginResponse(BaseModel):
+    admin: bool
+
+
 def success() -> SuccessResponse:
     return SuccessResponse(message="success!")
 

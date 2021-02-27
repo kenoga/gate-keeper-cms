@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./RoomCalendar.css";
+import "./AdminRoomCalendar.css";
 import Calendar, {
   CalendarTileProperties,
   DateCallback,
@@ -11,9 +11,10 @@ import * as util from "../util";
 import {
   CalendarResponse,
   TimeRange,
-  GetMonthCalendar,
+  GetAdminMonthCalendar,
   UserReservationCountResponse,
   GetUserReservationCount,
+  AdminCalendarResponse,
 } from "../api";
 import { FaBed, FaQuestion } from "react-icons/fa";
 import { WiDaySunny, WiSunset, WiMoonWaxingCrescent4 } from "react-icons/wi";
@@ -25,26 +26,19 @@ interface User {
   sessionToken: string;
 }
 
-function RoomCalendar() {
+function AdminRoomCalendar() {
   let [user, setUser] = useState({ sessionToken: "test" });
   let [calendar, setReserved] = useState({ playground_id: 0, reserved: {} });
-  let [
-    userReservationCount,
-    setUserReservationCount,
-  ] = useState<UserReservationCountResponse>({
-    all_count: 0,
-    simul_count: 0,
-    all_limit: 0,
-    simul_limit: 0,
-  });
 
-  useEffect(() => {
-    GetMonthCalendar(setReserved);
-    GetUserReservationCount(setUserReservationCount);
-  }, []);
   let history = useHistory();
+  useEffect(() => {
+    GetAdminMonthCalendar(setReserved).catch((error) =>
+      util.showErrorAndRedirect(error, history, "/")
+    );
+  }, []);
   return (
     <div>
+      <h2 className="text-center">管理画面</h2>
       <Calendar
         tileContent={(props: CalendarTileProperties) =>
           tileContent(props, calendar)
@@ -58,20 +52,6 @@ function RoomCalendar() {
         nextLabel=""
         next2Label=""
       />
-      <Row>
-        <Col xs="12" className="text-center">
-          <small>
-            合計予約数: {userReservationCount.all_count} /{" "}
-            {userReservationCount.all_limit}
-          </small>
-        </Col>
-        <Col xs="12" className="text-center">
-          <small>
-            同時予約数: {userReservationCount.simul_count} /{" "}
-            {userReservationCount.simul_limit}
-          </small>
-        </Col>
-      </Row>
     </div>
   );
 }
@@ -83,14 +63,16 @@ function onClickDay(date: Date, history: H.History) {
 
 function tileContent(
   props: CalendarTileProperties,
-  reserved: CalendarResponse
+  reserved: AdminCalendarResponse
 ): JSX.Element {
   return (
     <div>
-      {getStatusIcon("DAY", isReserved(props.date, "DAY", reserved))}
-      {getStatusIcon("EVENING", isReserved(props.date, "EVENING", reserved))}
-      <br></br>
-      {getStatusIcon("NIGHT", isReserved(props.date, "NIGHT", reserved))}
+      {isReserved(props.date, "DAY", reserved) &&
+        iconWithName(props.date, "DAY", reserved)}
+      {isReserved(props.date, "EVENING", reserved) &&
+        iconWithName(props.date, "EVENING", reserved)}
+      {isReserved(props.date, "NIGHT", reserved) &&
+        iconWithName(props.date, "NIGHT", reserved)}
     </div>
   );
 }
@@ -102,21 +84,30 @@ const iconMap = {
   OTHER: <FaQuestion></FaQuestion>,
 };
 
-function getStatusIcon(timeRange: TimeRange, isReserved: boolean): JSX.Element {
-  if (isReserved) {
-    return <MdDoNotDisturbAlt></MdDoNotDisturbAlt>;
-  }
-  return iconMap[timeRange];
-}
-
 function isReserved(
   date: Date,
   timeRange: TimeRange,
-  reserved: CalendarResponse
+  reserved: AdminCalendarResponse
 ): boolean {
   return (
     util.dateString(date) in reserved.reserved &&
     timeRange in reserved.reserved[util.dateString(date)]
+  );
+}
+
+function iconWithName(
+  date: Date,
+  timeRange: TimeRange,
+  reserved: AdminCalendarResponse
+): JSX.Element {
+  return (
+    <p>
+      {iconMap[timeRange]}
+      <br></br>
+      <p className="calendar-user-name">
+        {reserved.reserved[util.dateString(date)][timeRange].name}
+      </p>
+    </p>
   );
 }
 
@@ -129,4 +120,4 @@ function tileDisabled(
   return false;
 }
 
-export default RoomCalendar;
+export default AdminRoomCalendar;

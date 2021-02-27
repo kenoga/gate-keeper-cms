@@ -10,6 +10,19 @@ export type CalendarResponse = {
   reserved: { [date: string]: DateReservedInfo };
 };
 
+export type UserInfo = {
+  user_id: number;
+  email: string;
+  name: string;
+};
+
+export type AdminDateReservedInfo = { [Property in TimeRange]: UserInfo };
+
+export type AdminCalendarResponse = {
+  playground_id: number;
+  reserved: { [date: string]: AdminDateReservedInfo };
+};
+
 export type DateCalendarResponse = {
   playground_id: number;
   date: Date;
@@ -89,6 +102,30 @@ export function GetMonthCalendar(setCalendar: (res: CalendarResponse) => void) {
     });
 }
 
+export function GetAdminMonthCalendar(
+  setCalendar: (res: AdminCalendarResponse) => void
+) {
+  let today = new Date();
+  return util
+    .fetchGet("/api/admin/calendar/1", {
+      year: today.getFullYear(),
+      month: today.getMonth() + 1,
+    })
+    .then((response) => {
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Permisson Denied.");
+        }
+        throw new Error("Failed to fetch Reserved.");
+      }
+      return response.json();
+    })
+    .then((response: AdminCalendarResponse) => {
+      setCalendar(response);
+      console.log(response);
+    });
+}
+
 export function GetDateCaledar(
   date: Date,
   setCalendar: (res: DateReservedInfo) => void
@@ -138,11 +175,10 @@ export function PostReserve(
 }
 
 export function GetReservations(
-  user_id: number,
   setReservations: (reservations: Reservation[]) => void
 ) {
   return util
-    .fetchGet(`/api/user/${user_id}/reservations`, {})
+    .fetchGet(`/api/user/reservations`, {})
     .then((response) => {
       if (!response.ok) {
         throw new Error("Failed to fetch my reservations.");
@@ -160,11 +196,10 @@ export function GetReservations(
 }
 
 export function GetActiveReservation(
-  user_id: number,
   setReservation: (reservation: Reservation) => void
 ) {
   return util
-    .fetchGet(`/api/user/${user_id}/reservations/active`, {})
+    .fetchGet(`/api/user/reservations/active`, {})
     .then((response) => {
       if (!response.ok) {
         throw new Error("Failed to fetch active reservation.");

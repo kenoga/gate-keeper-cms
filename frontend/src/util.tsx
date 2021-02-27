@@ -1,3 +1,5 @@
+import * as H from "history";
+
 export function fetchGet(url: string, params: any): Promise<Response> {
   const qs = new URLSearchParams(params);
   return fetch(`${url}?${qs}`, {
@@ -61,4 +63,14 @@ export function timeStrFromStrForDisp(datestr?: string) {
 
 export function toMap(object: Object) {
   return new Map(Object.entries(object));
+}
+
+export function showErrorAndRedirect(
+  error: Error,
+  history: H.History,
+  redirectTo: string
+) {
+  console.log(error);
+  window.alert(error);
+  history.push(redirectTo);
 }

@@ -17,7 +17,7 @@ from .schema import SuccessResponse, LoginRequest, success, GatewayRequest, \
     GatewayAction, GatewayStatusResponse, \
     ReservationResponse, ReserveRequest, MyReservationsResponse, \
     DateCalendarResponse, MonthCalendarResponse, ReservationCountResponse, \
-    SignUpRequest, AdminMonthCalendarResponse 
+    SignUpRequest, AdminMonthCalendarResponse, LoginResponse
 
 app = FastAPI()
 
@@ -40,10 +40,12 @@ async def root():
 """
 User related API
 """
-@app.post("/api/login", response_model=SuccessResponse)
+
+
+@app.post("/api/login", response_model=LoginResponse)
 def login(param: LoginRequest,
           response: Response,
-          db: Session = Depends(get_db)) -> SuccessResponse:
+          db: Session = Depends(get_db)) -> LoginResponse:
     user = crud.fetch_user_with_sessions(
         db, param.email, hash_str(param.password))
     if user is None:
@@ -59,8 +61,8 @@ def login(param: LoginRequest,
         logger.info("new session token: " + token)
         response.set_cookie("session_key", token)
     if user.admin:
-        response.set_cookie("is_admin", "true")
-    return success()
+        return LoginResponse(admin=True)
+    return LoginResponse(admin=False)
 
 
 @app.post("/api/logout", response_model=SuccessResponse)
@@ -100,33 +102,25 @@ def get_month_reservation(playground_id: int,
     return MonthCalendarResponse(playground_id=playground_id, reserved=result)
 
 
-
-
 """
 Reservation API
 """
-@app.get("/api/user/{user_id}/reservations",
+
+
+@app.get("/api/user/reservations",
          response_model=MyReservationsResponse)
-def user_reservations(user_id: int,
-                      session_key: Optional[str] = Cookie(None),
+def user_reservations(session_key: Optional[str] = Cookie(None),
                       db: Session = Depends(get_db)):
-    try:
-        user = auth(db, session_key)
-        return MyReservationsResponse(
-            reservations=service.get_user_reservations(
-                db, user))
-    finally:
-        db.close()
+    user = auth(db, session_key)
+    return MyReservationsResponse(
+        reservations=service.get_user_reservations(db, user))
 
 
-@app.get("/api/user/{user_id}/reservations/active",
+@app.get("/api/user/reservations/active",
          response_model=ReservationResponse)
-def user_active_reservation(user_id: int,
-                            session_key: Optional[str] = Cookie(None),
+def user_active_reservation(session_key: Optional[str] = Cookie(None),
                             db: Session = Depends(get_db)):
     user = auth(db, session_key)
-    if user.id != user_id:
-        unauthorized()
     result = service.get_user_active_reservation(db, user)
     if result is None:
         raise HTTPException(
@@ -179,6 +173,7 @@ Key API
 """
 # TODO: 鍵操作APIの定義
 
+
 @app.put("/api/gateway/{action}", response_model=GatewayStatusResponse)
 def put_gateway(request: GatewayRequest,
                 action: GatewayAction,
@@ -224,14 +219,16 @@ def post_user(param: SignUpRequest,
 
 @app.get("/api/admin/calendar/{playground_id}",
          response_model=AdminMonthCalendarResponse)
-def get_month_reservation(playground_id: int,
-                          year: int,
-                          month: int,
-                          db: Session = Depends(get_db)):
+def get_admin_month_reservation(playground_id: int,
+                                year: int,
+                                month: int,
+                                session_key: Optional[str] = Cookie(None),
+                                db: Session = Depends(get_db)):
+    service.auth_admin(db, session_key)
     start = datetime.date(year, month, 1)
     end = datetime.date(year, month, calendar.monthrange(year, month)[1])
     result = service.get_calendar_with_user(db, playground_id, start, end)
     logger.info(result)
     return AdminMonthCalendarResponse(
-        playground_id=playground_id, 
+        playground_id=playground_id,
         reserved=result)

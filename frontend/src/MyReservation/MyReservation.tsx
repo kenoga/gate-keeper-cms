@@ -20,7 +20,7 @@ function MyReservation(props: RouteComponentProps) {
 
   useEffect(() => {
     // TODO: call api
-    GetReservations(8, setReservations);
+    GetReservations(setReservations);
   }, []);
 
   return (

@@ -12,7 +12,7 @@ function Key(props: RouteComponentProps) {
   let [reservation, setReservation] = useState<Reservation | null>(null);
 
   useEffect(() => {
-    GetActiveReservation(8, setReservation).catch((error) => {
+    GetActiveReservation(setReservation).catch((error) => {
       console.error(error);
       window.alert("現在有効な予約がありません。");
       props.history.push("/my/reservation");
