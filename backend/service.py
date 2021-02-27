@@ -145,8 +145,9 @@ def get_users_reservation_count(
     return all_count, simul_count
 
 
-def get_user_reservations(db: Session,
-                          user: model.User) -> List[schema.ReservationResponse]:
+def get_user_reservations(
+        db: Session,
+        user: model.User) -> List[schema.ReservationResponse]:
     reservations = crud.fetch_user_reservations(db, user.id)
     return [build_reservation_response(r) for r in reservations]
 

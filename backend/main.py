@@ -228,7 +228,6 @@ def get_admin_month_reservation(playground_id: int,
     start = datetime.date(year, month, 1)
     end = datetime.date(year, month, calendar.monthrange(year, month)[1])
     result = service.get_calendar_with_user(db, playground_id, start, end)
-    logger.info(result)
     return AdminMonthCalendarResponse(
         playground_id=playground_id,
         reserved=result)

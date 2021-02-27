@@ -7,8 +7,10 @@ import User from "../User";
 
 function Navigation() {
   return (
-    <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="/">Venture Growth</Navbar.Brand>
+    <Navbar expand="lg">
+      <Navbar.Brand href="/">
+        <img src="/venture_growth_icon.png" width="60px"></img>
+      </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
