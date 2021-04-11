@@ -45,6 +45,16 @@ function RoomCalendar() {
   let history = useHistory();
   return (
     <div>
+      <Row>
+        <Col xs="12" className="text-center">
+          今月の合計予約数: {userReservationCount.all_count} /{" "}
+          {userReservationCount.all_limit}
+        </Col>
+        <Col xs="12" className="text-center">
+          今月の同時予約数: {userReservationCount.simul_count} /{" "}
+          {userReservationCount.simul_limit}
+        </Col>
+      </Row>
       <Calendar
         tileContent={(props: CalendarTileProperties) =>
           tileContent(props, calendar)
@@ -58,20 +68,6 @@ function RoomCalendar() {
         nextLabel=""
         next2Label=""
       />
-      <Row>
-        <Col xs="12" className="text-center">
-          <small>
-            合計予約数: {userReservationCount.all_count} /{" "}
-            {userReservationCount.all_limit}
-          </small>
-        </Col>
-        <Col xs="12" className="text-center">
-          <small>
-            同時予約数: {userReservationCount.simul_count} /{" "}
-            {userReservationCount.simul_limit}
-          </small>
-        </Col>
-      </Row>
     </div>
   );
 }

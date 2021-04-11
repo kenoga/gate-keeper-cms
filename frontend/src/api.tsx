@@ -80,6 +80,12 @@ type GatewayStatusResponse = {
   status: DoorStatus;
 };
 
+export type UserProfileResponse = {
+  name: string;
+  email: string;
+  plan_name: string;
+};
+
 export function GetMonthCalendar(setCalendar: (res: CalendarResponse) => void) {
   let today = new Date();
   util
@@ -263,6 +269,43 @@ export function GetUserReservationCount(
     .then((response: UserReservationCountResponse) => {
       console.log(response);
       setReservationCount(response);
+    })
+    .then((error) => {
+      console.error(error);
+    });
+}
+
+export function GetUserProfile(
+  setUserProfile: (response: UserProfileResponse) => void
+) {
+  return util
+    .fetchGet(`/api/user/profile`, {})
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to get user profile.");
+      }
+      return response.json();
+    })
+    .then((response: UserProfileResponse) => {
+      console.log(response);
+      setUserProfile(response);
+    })
+    .then((error) => {
+      console.error(error);
+    });
+}
+
+export function PutEmailAndPassword(email: string, password: string) {
+  return util
+    .fetchPut(`/api/user/profile`, { email: email, password: password })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to put user profile.");
+      }
+      return response.json();
+    })
+    .then((response: SuccessResponse) => {
+      console.log(response);
     })
     .then((error) => {
       console.error(error);

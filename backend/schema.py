@@ -18,6 +18,17 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class ProfileResponse(BaseModel):
+    name: str
+    email: str
+    plan_name: str
+
+
+class PutProfileRequest(BaseModel):
+    email: str
+    password: str
+
+
 class SuccessResponse(BaseModel):
     message: str
 

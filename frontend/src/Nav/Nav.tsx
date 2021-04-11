@@ -15,7 +15,8 @@ function Navigation() {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Link href="/">ホーム</Nav.Link>
-          <Nav.Link href="/my/reservation">マイページ</Nav.Link>
+          <Nav.Link href="/my/reservation">予約一覧</Nav.Link>
+          <Nav.Link href="/my/page">マイページ</Nav.Link>
           {User.isLoggedIn() && (
             <Nav.Link onClick={User.logout}>ログアウト</Nav.Link>
           )}

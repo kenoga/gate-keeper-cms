@@ -17,7 +17,7 @@ from .schema import SuccessResponse, LoginRequest, success, GatewayRequest, \
     GatewayAction, GatewayStatusResponse, \
     ReservationResponse, ReserveRequest, MyReservationsResponse, \
     DateCalendarResponse, MonthCalendarResponse, ReservationCountResponse, \
-    SignUpRequest, AdminMonthCalendarResponse, LoginResponse
+    SignUpRequest, AdminMonthCalendarResponse, LoginResponse, ProfileResponse, PutProfileRequest
 
 app = FastAPI()
 
@@ -71,6 +71,29 @@ def logout(response: Response,
            db: Session = Depends(get_db)) -> SuccessResponse:
     auth(db, session_key)
     response.delete_cookie("session_key")
+    return success()
+
+
+@app.get("/api/user/profile", response_model=ProfileResponse)
+def get_profile(session_key: Optional[str] = Cookie(None),
+                db: Session = Depends(get_db)) -> ProfileResponse:
+    user = auth(db, session_key)
+    plan = user.plan
+    return ProfileResponse(name=user.name,
+                           email=user.email,
+                           plan_name=plan.name)
+
+
+@app.put("/api/user/profile", response_model=SuccessResponse)
+def put_profile(param: PutProfileRequest,
+                session_key: Optional[str] = Cookie(None),
+                db: Session = Depends(get_db)) -> SuccessResponse:
+    user = auth(db, session_key)
+    user.email = param.email
+    if param.password is not None and len(param.password) > 0:
+        user.update_password(param.password)
+    db.commit()
+
     return success()
 
 

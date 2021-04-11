@@ -6,6 +6,8 @@ from sqlalchemy.sql.functions import current_timestamp
 from sqlalchemy import Boolean, Column, Integer, String, \
     DateTime, Date, ForeignKey, Enum
 
+from .util import hash_str
+
 
 class User(Base):
     __tablename__ = "user"
@@ -28,6 +30,9 @@ class User(Base):
     reservations = relationship("Reservation", back_populates="user")
     gateway_sessions = relationship("GatewaySession", back_populates="user")
     plan = relationship("Plan", back_populates="users")
+
+    def update_password(self, password) -> None:
+        self.encrypted_password = hash_str(password)
 
 
 class UserSession(Base):

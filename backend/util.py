@@ -4,19 +4,9 @@ import hashlib
 import random
 import string
 import calendar
-from .crud import fetch_user_by_session_token
 from datetime import datetime, timezone, timedelta, date
 
 from sqlalchemy.orm import Session
-
-
-def auth(db: Session, session_key: Optional[Any]) -> NoReturn:
-    if session_key is None:
-        unauthorized()
-    user = fetch_user_by_session_token(db, session_key)
-    if user is None:
-        unauthorized()
-    return user
 
 
 def hash_str(value: str) -> str:
