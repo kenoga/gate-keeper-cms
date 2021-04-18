@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 import datetime
 
 from sqlalchemy.orm import Session, joinedload
@@ -66,11 +66,13 @@ def create_user(
         db: Session,
         email: str,
         encrypted_password: str,
-        name: Optional[str] = None):
+        name: str,
+        plan_id: int):
     user = model.User(
         email=email,
         encrypted_password=encrypted_password,
-        name=name)
+        name=name,
+        plan_id=plan_id)
     db.add(user)
     db.commit()
 
@@ -124,7 +126,8 @@ def fetch_reservations_by_date_range(
         end_date: datetime.date):
     return db.query(model.Reservation) \
         .options(
-            joinedload(model.Reservation.user)) \
+            joinedload(model.Reservation.user)
+            .joinedload(model.User.plan)) \
         .filter(
             model.Reservation.playground_id == playground_id,
             model.Reservation.date >= start_date,
@@ -167,3 +170,15 @@ def fetch_gateway_session_by_token(
         joinedload(
             model.GatewaySession.gateway)).filter(
                 model.GatewaySession.token == token).first()
+
+
+def get_users(db: Session) -> List[model.User]:
+    return db.query(model.User).all()
+
+
+def get_plans(db: Session) -> List[model.Plan]:
+    return db.query(model.Plan).all()
+
+
+def get_user(db: Session, userId: int) -> model.User:
+    return db.query(model.User).filter(model.User.id == userId).first()

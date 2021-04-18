@@ -65,7 +65,7 @@ function reservationContent(
               {util.timeStrFromStrForDisp(reservation.end_at)}
             </Card.Title>
             <Card.Text>{reservation.playground.name}</Card.Text>
-            {!isEble(reservation) && (
+            {/* {!isEble(reservation) && (
               <Card.Text>
                 <small className="text-muted">
                   予約時間内になると鍵ページにアクセスできます
@@ -81,7 +81,7 @@ function reservationContent(
               >
                 鍵ページへ
               </Button>
-            )}
+            )} */}
           </Card.Body>
         </Card>
       </Col>

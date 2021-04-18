@@ -21,6 +21,7 @@ import { WiDaySunny, WiSunset, WiMoonWaxingCrescent4 } from "react-icons/wi";
 import { MdDoNotDisturbAlt } from "react-icons/md";
 import { JsxExpression } from "typescript";
 import { Col, Row } from "react-bootstrap";
+import UserList from "../UserList/UserList";
 
 interface User {
   sessionToken: string;
@@ -52,6 +53,8 @@ function AdminRoomCalendar() {
         nextLabel=""
         next2Label=""
       />
+
+      <UserList></UserList>
     </div>
   );
 }

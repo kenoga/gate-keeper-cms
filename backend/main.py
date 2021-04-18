@@ -6,7 +6,7 @@ from .import crud
 import logging
 import datetime
 import calendar
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import FastAPI, Cookie, Response, Depends, HTTPException
 from fastapi.logger import logger
@@ -17,7 +17,8 @@ from .schema import SuccessResponse, LoginRequest, success, GatewayRequest, \
     GatewayAction, GatewayStatusResponse, \
     ReservationResponse, ReserveRequest, MyReservationsResponse, \
     DateCalendarResponse, MonthCalendarResponse, ReservationCountResponse, \
-    SignUpRequest, AdminMonthCalendarResponse, LoginResponse, ProfileResponse, PutProfileRequest
+    SignUpRequest, AdminMonthCalendarResponse, LoginResponse, ProfileResponse, PutProfileRequest, \
+    UserListResponse, PlanResponse, UpdatePlanRequest, SignUpResponse
 
 app = FastAPI()
 
@@ -231,12 +232,49 @@ def get_gateway_status(request: GatewayRequest,
 
 
 # Admin API
-@app.post("/api/admin/user/", response_model=SuccessResponse)
+@app.get("/api/admin/user", response_model=UserListResponse)
+def post_user(session_key: Optional[str] = Cookie(None),
+              db: Session = Depends(get_db)) -> UserListResponse:
+    service.auth_admin(db, session_key)
+    users = crud.get_users(db)
+    return UserListResponse(user_list=users)
+
+
+@app.get("/api/admin/plan", response_model=List[PlanResponse])
+def post_user(session_key: Optional[str] = Cookie(None),
+              db: Session = Depends(get_db)) -> List[PlanResponse]:
+    service.auth_admin(db, session_key)
+    return crud.get_plans(db)
+
+
+@app.post("/api/admin/user", response_model=SignUpResponse)
 def post_user(param: SignUpRequest,
               session_key: Optional[str] = Cookie(None),
-              db: Session = Depends(get_db)) -> SuccessResponse:
+              db: Session = Depends(get_db)) -> SignUpResponse:
     service.auth_admin(db, session_key)
-    crud.create_user(db, param.email, hash_str(param.password), param.name)
+    password = randomstr(16)
+    crud.create_user(
+        db,
+        param.email,
+        hash_str(password),
+        param.name,
+        param.plan_id)
+    return SignUpResponse(password=password)
+
+
+@app.put("/api/admin/user/plan", response_model=SuccessResponse)
+def put_user_plan(param: UpdatePlanRequest,
+                  session_key: Optional[str] = Cookie(None),
+                  db: Session = Depends(get_db)):
+    service.auth_admin(db, session_key)
+    user = crud.get_user(db, int(param.user_id))
+    if user:
+        user.plan_id = param.plan_id
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found.")
+    db.commit()
     return success()
 
 

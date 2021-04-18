@@ -10,10 +10,16 @@ export type CalendarResponse = {
   reserved: { [date: string]: DateReservedInfo };
 };
 
+export type Plan = {
+  id: number;
+  name: string;
+};
+
 export type UserInfo = {
-  user_id: number;
+  id: number;
   email: string;
   name: string;
+  plan: Plan;
 };
 
 export type AdminDateReservedInfo = { [Property in TimeRange]: UserInfo };
@@ -80,10 +86,18 @@ type GatewayStatusResponse = {
   status: DoorStatus;
 };
 
+type CreateUserResponse = {
+  password: string;
+};
+
 export type UserProfileResponse = {
   name: string;
   email: string;
   plan_name: string;
+};
+
+export type UserListResponse = {
+  user_list: Array<UserInfo>;
 };
 
 export function GetMonthCalendar(setCalendar: (res: CalendarResponse) => void) {
@@ -306,6 +320,79 @@ export function PutEmailAndPassword(email: string, password: string) {
     })
     .then((response: SuccessResponse) => {
       console.log(response);
+    })
+    .then((error) => {
+      console.error(error);
+    });
+}
+
+export function GetUsers(setUsers: (response: Array<UserInfo>) => void) {
+  return util
+    .fetchGet(`/api/admin/user`, {})
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to get users.");
+      }
+      return response.json();
+    })
+    .then((response: UserListResponse) => {
+      console.log(response);
+      setUsers(response.user_list);
+    })
+    .then((error) => {
+      console.error(error);
+    });
+}
+
+export function GetPlans(setPlans: (response: Array<Plan>) => void) {
+  return util
+    .fetchGet(`/api/admin/plan`, {})
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to get plan.");
+      }
+      return response.json();
+    })
+    .then((response: Array<Plan>) => {
+      console.log(response);
+      setPlans(response);
+    })
+    .then((error) => {
+      console.error(error);
+    });
+}
+
+export function UpdatePlan(userId: number, planId: number) {
+  return util
+    .fetchPut("/api/admin/user/plan", { user_id: userId, plan_id: planId })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to update user plan.");
+      }
+      return response.json();
+    })
+    .then((response: SuccessResponse) => {
+      window.alert(`User ID: ${userId}のプランを更新しました。`);
+      console.log(response);
+    })
+    .then((error) => {
+      console.error(error);
+    });
+}
+
+export function CreateUser(name: string, email: string, planId: number) {
+  return util
+    .fetchPost("/api/admin/user", { name: name, email: email, plan_id: planId })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to create user.");
+      }
+      return response.json();
+    })
+    .then((response: CreateUserResponse) => {
+      window.alert(
+        `${name} (${email})のアカウントを作成しました。初期パスワードは '${response.password}' です。ログイン後、パスワードを変更するように伝えてください。`
+      );
     })
     .then((error) => {
       console.error(error);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./MyPage.css";
 import "react-calendar/dist/Calendar.css";
 import { RouteComponentProps, useParams } from "react-router-dom";
-import { Button, Card, Form, Image, Row } from "react-bootstrap";
+import { Button, Card, Container, Form, Image, Row } from "react-bootstrap";
 import { GetReservations, Reservation } from "../api";
 import { Col } from "react-bootstrap";
 import * as util from "../util";
@@ -50,7 +50,7 @@ function MyPage(props: RouteComponentProps) {
   }, []);
 
   return (
-    <div className="myReservation">
+    <Container className="myReservation p-3">
       <h2 className="text-center">マイページ</h2>
 
       <Form>
@@ -94,7 +94,7 @@ function MyPage(props: RouteComponentProps) {
       </Form>
 
       <Row className="justify-content-center mt-5">
-        <Col xs="2" className="text-center">
+        <Col xs="4" md="2" className="text-center">
           <Button
             variant="primary"
             onClick={(e) =>
@@ -109,7 +109,7 @@ function MyPage(props: RouteComponentProps) {
           </Button>
         </Col>
       </Row>
-    </div>
+    </Container>
   );
 }
 

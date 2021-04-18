@@ -9,8 +9,12 @@ from . import model
 
 class SignUpRequest(BaseModel):
     email: str
-    password: str
     name: str
+    plan_id: int
+
+
+class SignUpResponse(BaseModel):
+    password: str
 
 
 class LoginRequest(BaseModel):
@@ -31,6 +35,11 @@ class PutProfileRequest(BaseModel):
 
 class SuccessResponse(BaseModel):
     message: str
+
+
+class UpdatePlanRequest(BaseModel):
+    user_id: int
+    plan_id: int
 
 
 class LoginResponse(BaseModel):
@@ -79,10 +88,19 @@ class MonthCalendarResponse(BaseModel):
     reserved: Dict[datetime.date, Dict[model.TimeRange, int]]
 
 
+class PlanResponse(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
 class UserResponse(BaseModel):
     id: int
     name: str
     email: str
+    plan: PlanResponse
 
     class Config:
         orm_mode = True
@@ -133,3 +151,10 @@ class MyReservationsResponse(BaseModel):
 class GatewayStatusResponse(BaseModel):
     gateway_id: int
     status: model.DoorStatus
+
+
+class UserListResponse(BaseModel):
+    user_list: List[UserResponse]
+
+    class Config:
+        orm_mode = True
