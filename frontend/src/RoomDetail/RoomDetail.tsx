@@ -10,6 +10,9 @@ import {
   PostReserve,
   SuccessResponse,
 } from "../api";
+import DisableRadioButtons, {
+  IdAndValue,
+} from "../Components/DisableRadioButtons";
 
 type DetailParam = {
   dateString: string;
@@ -19,18 +22,16 @@ type TimeSlotId = TimeRange;
 type TimeSlotInfo = {
   name: string;
 };
-type TimeSlotInfos = Map<TimeSlotId, TimeSlotInfo>;
 
-const TIME_SLOTS: TimeSlotInfos = new Map([
-  ["DAY", { name: "12:00 - 17:00" }],
-  ["EVENING", { name: "18:00 - 23:00" }],
-  ["NIGHT", { name: "24:00 - 10:00" }],
-]);
+const TIME_SLOTS: IdAndValue<TimeSlotId>[] = [
+  { id: "DAY", value: "12:00 - 17:00" },
+  { id: "EVENING", value: "18:00 - 23:00" },
+  { id: "NIGHT", value: "24:00 - 10:00" },
+];
 
 function pickEmpty(reservedInfo: DateReservedInfo): TimeSlotId | null {
-  for (let key of Array.from(TIME_SLOTS.keys())) {
-    if (reservedInfo.get(key as TimeSlotId) == undefined)
-      return key as TimeSlotId;
+  for (let idAndValue of TIME_SLOTS) {
+    if (reservedInfo.get(idAndValue.id) == undefined) return idAndValue.id;
   }
   return null;
 }
@@ -40,7 +41,6 @@ function RoomDetail(props: RouteComponentProps<DetailParam>) {
   let [dateString, setDateString] = useState<string>(
     props.match.params.dateString
   );
-  let [timeSlotInfos, setTimeSlotInfos] = useState<TimeSlotInfos>(TIME_SLOTS);
   let [reservedInfo, setReservedInfo] = useState<DateReservedInfo>(new Map());
 
   useEffect(() => {
@@ -48,6 +48,8 @@ function RoomDetail(props: RouteComponentProps<DetailParam>) {
   }, [dateString]);
 
   useEffect(() => {
+    console.log("reservedInfo", reservedInfo);
+    console.log(reservedInfo.get("NIGHT"));
     let emptySlot = pickEmpty(reservedInfo);
     if (emptySlot) {
       setTimeSlot(emptySlot);
@@ -59,19 +61,15 @@ function RoomDetail(props: RouteComponentProps<DetailParam>) {
       <p>ABCマンション中目黒の詳細</p>
       <h3>{dateString}</h3>
 
-      <div
-        onChange={(e) => handleChange(e, setTimeSlot)}
-        className="radioButtons text-center"
-      >
-        {Array.from(timeSlotInfos.keys()).map((timeSlotId) => {
-          return returnRadioButton(
-            timeSlotId,
-            timeSlotInfos,
-            reservedInfo,
-            selectedTimeSlot
-          );
-        })}
-      </div>
+      <DisableRadioButtons
+        values={TIME_SLOTS}
+        isDisable={(id: TimeSlotId) => {
+          return reservedInfo.get(id) != null;
+        }}
+        selectedId={selectedTimeSlot}
+        setSelectedId={setTimeSlot}
+      ></DisableRadioButtons>
+
       <div className="text-center">
         <Button
           variant="primary"
@@ -90,9 +88,6 @@ function handleSubmit(
   selectedTimeSlot: TimeSlotId,
   dateString: string
 ) {
-  console.log("submit!");
-  console.log(selectedTimeSlot);
-  console.log(dateString);
   PostReserve(dateString, selectedTimeSlot).then(
     (response: SuccessResponse | null) => {
       if (response == null) {
@@ -104,45 +99,5 @@ function handleSubmit(
     }
   );
 }
-
-function handleChange(
-  e: any,
-  setTimeSlot: (timeSlot: TimeSlotId) => void
-): void {
-  setTimeSlot(e.target.value);
-}
-
-function returnRadioButton(
-  timeSlotId: TimeSlotId,
-  timeSlotInfos: TimeSlotInfos,
-  reservedInfo: DateReservedInfo,
-  selectedTimeSlot: TimeSlotId
-): JSX.Element {
-  return (
-    <Form.Check
-      type="radio"
-      name={timeSlotInfos.get(timeSlotId)?.name}
-      className="radioButton custom-control custom-radio"
-      id={timeSlotId}
-    >
-      <Form.Check.Input
-        type="radio"
-        checked={selectedTimeSlot == timeSlotId}
-        value={timeSlotId}
-        disabled={reservedInfo.get(timeSlotId) != undefined}
-        // className="custom-control-input"
-      ></Form.Check.Input>
-      <Form.Check.Label
-      // className="custom-control-label"
-      >
-        {timeSlotInfos.get(timeSlotId)?.name}
-      </Form.Check.Label>
-    </Form.Check>
-  );
-}
-
-// function isAble(reservedInfo: DateReservedInfo, timeSlotId: TimeSlotId) {
-//   if (reservedInfo.get(timeSlotId) == undefined)) return false
-// }
 
 export default RoomDetail;

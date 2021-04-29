@@ -55,7 +55,6 @@ function AdminRoomCalendar() {
 }
 
 function onClickDay(date: Date, history: H.History) {
-  console.log(util.dateString(date));
   history.push(`/detail/${util.dateString(date)}`);
 }
 
@@ -112,7 +111,6 @@ function iconWithName(
 function tileDisabled(
   props: CalendarTileProperties & { activeStartDate: Date }
 ): boolean {
-  console.log(props.date);
   const today_start = new Date();
   today_start.setHours(0, 0, 0, 0);
   if (props.date < today_start) {
