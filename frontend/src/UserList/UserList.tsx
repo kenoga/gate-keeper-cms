@@ -11,6 +11,7 @@ import {
 } from "../api";
 import { Col } from "react-bootstrap";
 import * as util from "../util";
+import Selector from "../Components/Selector";
 
 const handlePlanChange = (userId: number, planId: number) => {
   UpdatePlan(userId, planId);
@@ -69,11 +70,14 @@ const CreateUserView: React.FC<CreateUserViewProps> = ({ plans }) => {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          <PlanSelector
-            plans={plans}
-            initPlanId={1}
-            setPlanId={setPlanId}
-          ></PlanSelector>
+          <Selector
+            idAndNames={plans.map((plan) => {
+              return { id: plan.id, name: plan.name };
+            })}
+            selectedId={planId}
+            setId={setPlanId}
+            label="プラン"
+          ></Selector>
         </Form.Group>
 
         <Row className="justify-content-center mt-5">
@@ -102,13 +106,16 @@ function User(user: UserInfo, plans: Array<Plan>) {
         <Card.Body>
           <Card.Title>{user.email}</Card.Title>
           <Form>
-            <PlanSelector
-              plans={plans}
-              initPlanId={user.plan.id}
-              setPlanId={(newPlanId: number) => {
-                planId = newPlanId;
+            <Selector
+              idAndNames={plans.map((plan) => {
+                return { id: plan.id, name: plan.name };
+              })}
+              selectedId={planId}
+              setId={(newId: number) => {
+                planId = newId;
               }}
-            ></PlanSelector>
+              label="プラン"
+            ></Selector>
           </Form>
 
           <Button
@@ -124,39 +131,5 @@ function User(user: UserInfo, plans: Array<Plan>) {
     </div>
   );
 }
-
-interface PlanSelectorProps {
-  plans: Array<Plan>;
-  initPlanId: number;
-  setPlanId: (planId: number) => void;
-}
-
-const PlanSelector: React.FC<PlanSelectorProps> = ({
-  plans,
-  initPlanId,
-  setPlanId,
-}) => {
-  var planId = initPlanId;
-  return (
-    <Form.Group controlId="exampleForm.ControlSelect1">
-      <Form.Label>プラン</Form.Label>
-      <Form.Control
-        as="select"
-        onChange={(e) => {
-          planId = Number(e.target.value);
-          setPlanId(planId);
-        }}
-      >
-        {plans.map((plan: Plan) => {
-          return (
-            <option value={plan.id} selected={planId == plan.id}>
-              {plan.name}
-            </option>
-          );
-        })}
-      </Form.Control>
-    </Form.Group>
-  );
-};
 
 export default UserList;
