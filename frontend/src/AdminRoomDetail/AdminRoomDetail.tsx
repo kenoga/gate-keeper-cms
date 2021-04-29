@@ -121,7 +121,7 @@ function handleSubmit(
         window.alert("予約が失敗しました。");
       } else {
         window.alert("予約が完了しました。");
-        props.history.push("/my/reservation");
+        props.history.push("/admin");
       }
     }
   );
