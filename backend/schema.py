@@ -22,12 +22,6 @@ class LoginRequest(BaseModel):
     password: str
 
 
-class ProfileResponse(BaseModel):
-    name: str
-    email: str
-    plan_name: str
-
-
 class PutProfileRequest(BaseModel):
     email: str
     password: str
@@ -98,9 +92,17 @@ class MonthCalendarResponse(BaseModel):
 class PlanResponse(BaseModel):
     id: int
     name: str
+    monthly_limit: int
+    simul_limit: int
 
     class Config:
         orm_mode = True
+
+
+class ProfileResponse(BaseModel):
+    name: str
+    email: str
+    plan: PlanResponse
 
 
 class UserResponse(BaseModel):

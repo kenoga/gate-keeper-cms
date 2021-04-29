@@ -13,6 +13,8 @@ export type CalendarResponse = {
 export type Plan = {
   id: number;
   name: string;
+  monthly_limit: number;
+  simul_limit: number;
 };
 
 export type UserInfo = {
@@ -93,7 +95,7 @@ type CreateUserResponse = {
 export type UserProfileResponse = {
   name: string;
   email: string;
-  plan_name: string;
+  plan: Plan;
 };
 
 export type UserListResponse = {
@@ -301,7 +303,6 @@ export function GetUserProfile(
       return response.json();
     })
     .then((response: UserProfileResponse) => {
-      console.log(response);
       setUserProfile(response);
     })
     .then((error) => {

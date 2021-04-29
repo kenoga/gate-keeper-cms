@@ -82,7 +82,7 @@ def get_profile(session_key: Optional[str] = Cookie(None),
     plan = user.plan
     return ProfileResponse(name=user.name,
                            email=user.email,
-                           plan_name=plan.name)
+                           plan=plan)
 
 
 @app.put("/api/user/profile", response_model=SuccessResponse)

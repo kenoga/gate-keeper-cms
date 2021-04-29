@@ -34,7 +34,12 @@ const handleSubmit = (
 function MyPage(props: RouteComponentProps) {
   let [reservations, setReservations] = useState<Reservation[]>([]);
   let [name, setName] = useState<string>("");
-  let [planName, setPlanName] = useState<string>("");
+  let [plan, setPlan] = useState<api.Plan>({
+    id: 0,
+    name: "",
+    monthly_limit: 0,
+    simul_limit: 0,
+  });
   let [email, setEmail] = useState<string>("");
   let [password, setPassword] = useState<string>("********");
   let [password2, setPassword2] = useState<string>("********");
@@ -44,7 +49,7 @@ function MyPage(props: RouteComponentProps) {
     GetReservations(setReservations);
     api.GetUserProfile((response: api.UserProfileResponse) => {
       setName(response.name);
-      setPlanName(response.plan_name);
+      setPlan(response.plan);
       setEmail(response.email);
     });
   }, []);
@@ -61,7 +66,10 @@ function MyPage(props: RouteComponentProps) {
 
         <Form.Group controlId="formBasicEmail">
           <Form.Label>プラン</Form.Label>
-          <Form.Text>{planName}</Form.Text>
+          <Form.Text>
+            {plan.name} (月毎の最大予約回数: {plan.monthly_limit},
+            月毎の最大同時予約回数: {plan.simul_limit})
+          </Form.Text>
         </Form.Group>
 
         <Form.Group controlId="formBasicEmail">
