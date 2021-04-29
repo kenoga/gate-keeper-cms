@@ -67,6 +67,7 @@ function RoomCalendar() {
         prev2Label=""
         nextLabel=""
         next2Label=""
+        view="month"
       />
     </div>
   );

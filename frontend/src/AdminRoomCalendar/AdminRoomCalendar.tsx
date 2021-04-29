@@ -45,15 +45,10 @@ function AdminRoomCalendar() {
           tileContent(props, calendar)
         }
         onClickDay={(date: Date) => onClickDay(date, history)}
-        activeStartDate={new Date()}
         showNeighboringMonth={false}
         tileDisabled={tileDisabled}
-        prevLabel=""
-        prev2Label=""
-        nextLabel=""
-        next2Label=""
+        view="month"
       />
-
       <UserList></UserList>
     </div>
   );
@@ -117,7 +112,10 @@ function iconWithName(
 function tileDisabled(
   props: CalendarTileProperties & { activeStartDate: Date }
 ): boolean {
-  if (props.date.getDate() <= new Date().getDate()) {
+  console.log(props.date);
+  const today_start = new Date();
+  today_start.setHours(0, 0, 0, 0);
+  if (props.date < today_start) {
     return true;
   }
   return false;
