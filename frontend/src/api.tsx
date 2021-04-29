@@ -398,3 +398,31 @@ export function CreateUser(name: string, email: string, planId: number) {
       console.error(error);
     });
 }
+
+export function AdminPostReserve(
+  dateString: string,
+  timeRange: TimeRange,
+  userId: number
+): Promise<SuccessResponse | null> {
+  return util
+    .fetchPost(`/api/admin/reserve`, {
+      playground_id: 1,
+      date: dateString,
+      time_range: timeRange,
+      user_id: userId,
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to reserve");
+      }
+      return response.json();
+    })
+    .then((response: SuccessResponse) => {
+      console.log(response);
+      return response;
+    })
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
+}

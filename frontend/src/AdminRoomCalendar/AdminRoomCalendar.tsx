@@ -55,7 +55,7 @@ function AdminRoomCalendar() {
 }
 
 function onClickDay(date: Date, history: H.History) {
-  history.push(`/detail/${util.dateString(date)}`);
+  history.push(`/admin/detail/${util.dateString(date)}`);
 }
 
 function tileContent(

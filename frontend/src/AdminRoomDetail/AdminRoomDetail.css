@@ -1,0 +1,29 @@
+h1 {
+  margin-top: 30px !important;
+}
+
+h2 {
+  margin-top: 30px !important;
+}
+
+.roomDetail {
+  margin: 0 5%;
+}
+
+.radioButtons {
+  size: 16px;
+}
+
+.radioButton {
+  font-size: 20px;
+  margin: 10px;
+  border: 1px black;
+}
+
+.custom-radio .custom-control-input:checked ~ .custom-control-label::before {
+  background-color: red;
+}
+
+.radioButtons {
+  margin: 30px;
+}

@@ -18,7 +18,7 @@ from .schema import SuccessResponse, LoginRequest, success, GatewayRequest, \
     ReservationResponse, ReserveRequest, MyReservationsResponse, \
     DateCalendarResponse, MonthCalendarResponse, ReservationCountResponse, \
     SignUpRequest, AdminMonthCalendarResponse, LoginResponse, ProfileResponse, PutProfileRequest, \
-    UserListResponse, PlanResponse, UpdatePlanRequest, SignUpResponse
+    UserListResponse, PlanResponse, UpdatePlanRequest, SignUpResponse, AdminReserveRequest
 
 app = FastAPI()
 
@@ -292,3 +292,29 @@ def get_admin_month_reservation(playground_id: int,
     return AdminMonthCalendarResponse(
         playground_id=playground_id,
         reserved=result)
+
+
+@app.post("/api/admin/reserve")
+def reserve(request: AdminReserveRequest,
+            session_key: Optional[str] = Cookie(None),
+            db: Session = Depends(get_db)):
+    service.auth_admin(db, session_key)
+    start_at, end_at = service.resolve_time_range(
+        request.date, request.time_range)
+    service.check_reservation_duplicate(
+        db, request.playground_id, request.date, request.time_range)
+
+    user = crud.get_user_by_id(db, request.user_id)
+
+    service.check_user_reservation_limit(
+        db, user, today())
+
+    crud.create_reservation(
+        db,
+        user.id,
+        request.playground_id,
+        request.date,
+        request.time_range,
+        start_at,
+        end_at)
+    return success()

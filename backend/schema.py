@@ -56,6 +56,13 @@ class ReserveRequest(BaseModel):
     time_range: str
 
 
+class AdminReserveRequest(BaseModel):
+    playground_id: int
+    date: datetime.date
+    time_range: str
+    user_id: int
+
+
 class GatewayAction(enum.Enum):
     LOCK = "lock"
     UNLOCK = "unlock"

@@ -10,6 +10,10 @@ def get_first_user(db: Session):
     return db.query(model.User).first()
 
 
+def get_user_by_id(db: Session, user_id: int):
+    return db.query(model.User).filter(model.User.id == user_id).first()
+
+
 def get_first_user_with_reservations(db: Session):
     return db.query(
         model.User).options(

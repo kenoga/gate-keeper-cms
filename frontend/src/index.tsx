@@ -17,6 +17,7 @@ import Login from "./Login";
 import Auth from "./Auth";
 import MyReservation from "./MyReservation/MyReservation";
 import MyPage from "./MyPage/MyPage";
+import AdminRoomDetail from "./AdminRoomDetail/AdminRoomDetail";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -30,7 +31,12 @@ ReactDOM.render(
             <Route exact path="/my/page" component={MyPage} />
             <Route exact path="/my/key" component={Key} />
             <Route path="/detail/:dateString" component={RoomDetail} />
-            <Route path="/admin" component={AdminRoomCalendar} />
+            <Route
+              exact
+              path="/admin/detail/:dateString"
+              component={AdminRoomDetail}
+            />
+            <Route exact path="/admin" component={AdminRoomCalendar} />
           </Switch>
         </Auth>
         <Route path="/login" component={Login} />
