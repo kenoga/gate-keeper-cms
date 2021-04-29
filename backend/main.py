@@ -286,8 +286,8 @@ def get_admin_month_reservation(playground_id: int,
                                 session_key: Optional[str] = Cookie(None),
                                 db: Session = Depends(get_db)):
     service.auth_admin(db, session_key)
-    start = datetime.date(year, month, 1)
-    end = datetime.date(year, month, calendar.monthrange(year, month)[1])
+    start = datetime.date(year - 1, month, 1)
+    end = datetime.date(year + 1, month, calendar.monthrange(year, month)[1])
     result = service.get_calendar_with_user(db, playground_id, start, end)
     return AdminMonthCalendarResponse(
         playground_id=playground_id,
