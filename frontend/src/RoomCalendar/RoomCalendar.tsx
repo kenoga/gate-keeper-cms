@@ -119,7 +119,7 @@ function isReserved(
 function tileDisabled(
   props: CalendarTileProperties & { activeStartDate: Date }
 ): boolean {
-  if (props.date.getDate() < new Date().getDate()) {
+  if (props.date.getDate() <= new Date().getDate()) {
     return true;
   }
   return false;
