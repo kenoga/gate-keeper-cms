@@ -136,13 +136,22 @@ def get_users_reservation_count(
     month_end_day = date(today.year,
                          today.month,
                          util.month_last_day(today.year, today.month))
-    all_count = len(crud.fetch_all_user_reservations(
+    all_count = calculate_reservation_counts(crud.fetch_all_user_reservations(
         db, user, month_start_day, month_end_day
     ))
-    simul_count = len(crud.fetch_all_user_reservations(
-        db, user, today, month_end_day
-    ))
+    simul_count = calculate_reservation_counts(
+        crud.fetch_all_user_reservations(
+            db, user, today, month_end_day))
     return all_count, simul_count
+
+
+def calculate_reservation_counts(reservations: List[model.Reservation]):
+    def calculate(reservation):
+        if reservation.time_range == model.TimeRange.NIGHT:
+            return 2
+        return 1
+
+    return sum([calculate(reservation) for reservation in reservations])
 
 
 def get_user_reservations(

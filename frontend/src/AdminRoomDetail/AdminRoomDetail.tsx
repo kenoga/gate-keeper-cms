@@ -28,9 +28,9 @@ type TimeSlotInfo = {
 };
 
 const TIME_SLOTS: IdAndValue<TimeSlotId>[] = [
-  { id: "DAY", value: "12:00 - 17:00" },
-  { id: "EVENING", value: "18:00 - 23:00" },
-  { id: "NIGHT", value: "24:00 - 10:00" },
+  { id: "DAY", value: "12:00 - 17:00 (使用枠数1)" },
+  { id: "EVENING", value: "18:00 - 23:00 (使用枠数1)" },
+  { id: "NIGHT", value: "24:00 - 10:00 (使用枠数2)" },
 ];
 
 function pickEmpty(reservedInfo: DateReservedInfo): TimeSlotId | null {
