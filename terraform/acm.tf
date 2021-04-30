@@ -1,3 +1,3 @@
-# data "aws_acm_certificate" "main" {
-#   domain = "coloria.jp"
-# }
+data "aws_acm_certificate" "main" {
+  domain = "*.vg-reserve.com"
+}
